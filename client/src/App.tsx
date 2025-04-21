@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
+import AboutPage from "@/pages/about-page";
+import ContactPage from "@/pages/contact-page";
 import PgDetailsPage from "@/pages/pg-details-page";
 import BookingPage from "@/pages/booking-page";
 import BookingConfirmation from "@/pages/booking-confirmation";
@@ -20,6 +22,8 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/about" component={AboutPage} />
+      <Route path="/contact" component={ContactPage} />
       <Route path="/pg/:id" component={PgDetailsPage} />
       <ProtectedRoute path="/booking/:roomId" component={BookingPage} />
       <ProtectedRoute path="/booking-confirmation/:bookingId" component={BookingConfirmation} />
