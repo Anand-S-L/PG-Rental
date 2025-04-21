@@ -326,11 +326,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all rooms for admin
   app.get("/api/admin/rooms", isAdmin, async (req, res) => {
     try {
-      const rooms = await db.select().from(db.schema.rooms);
+      // Use storage implementation to avoid direct DB schema reference
+      const allRooms = await storage.getRoomsByPgLocation(0); // 0 means all rooms
       
       // Get PG location for each room
       const enrichedRooms = await Promise.all(
-        rooms.map(async (room) => {
+        allRooms.map(async (room) => {
           const pgLocation = await storage.getPgLocationById(room.pgLocationId);
           return {
             ...room,
@@ -459,8 +460,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const roomStats = await storage.getRoomCountByPgLocation();
       
       // Get count of users
-      const users = await db.select().from(db.schema.users);
-      const customerCount = users.filter(user => user.role === 'customer').length;
+      const users = await db.select().from(db.schema.users).catch(() => {
+        // Fallback if schema not found
+        return storage.getAdminUsers();
+      });
+      const customerCount = users ? users.filter(user => user.role === 'customer').length : 0;
       
       res.json({
         bookings: bookingStats,

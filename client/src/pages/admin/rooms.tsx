@@ -86,7 +86,7 @@ export default function AdminRoomsPage() {
   });
   
   // Form for adding new room
-  const addRoomForm = useForm<RoomFormValues>({
+  const addRoomForm = useForm({
     resolver: zodResolver(roomFormSchema),
     defaultValues: {
       roomNumber: "",
@@ -98,7 +98,7 @@ export default function AdminRoomsPage() {
   });
   
   // Form for editing room
-  const editRoomForm = useForm<RoomFormValues>({
+  const editRoomForm = useForm({
     resolver: zodResolver(roomFormSchema),
     defaultValues: {
       roomNumber: "",
