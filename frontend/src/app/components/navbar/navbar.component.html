@@ -1,0 +1,27 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="container">
+    <div class="navbar-brand">
+      <a routerLink="/" class="brand-link">
+        <span class="brand-logo">PG</span>
+        <span class="brand-text">Rental</span>
+      </a>
+    </div>
+    
+    <div class="spacer"></div>
+    
+    <div class="navbar-links" [class.open]="isMenuOpen">
+      <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <ng-container *ngIf="isAuthenticated$ | async; else loginLink">
+        <a mat-button routerLink="/admin" routerLinkActive="active">Admin Dashboard</a>
+        <button mat-button (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #loginLink>
+        <a mat-button routerLink="/login" routerLinkActive="active">Admin Login</a>
+      </ng-template>
+    </div>
+    
+    <button mat-icon-button class="menu-toggle" (click)="toggleMenu()">
+      <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

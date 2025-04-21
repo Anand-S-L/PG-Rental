@@ -1,0 +1,135 @@
+<h2 mat-dialog-title>{{ formTitle }}</h2>
+
+<form [formGroup]="pgForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="form-content">
+    <div class="form-fields-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>PG Title</mat-label>
+        <input matInput formControlName="title" placeholder="Enter title">
+        <mat-error *ngIf="pgForm.get('title')?.hasError('required')">Title is required</mat-error>
+        <mat-error *ngIf="pgForm.get('title')?.hasError('maxlength')">Title is too long</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Location</mat-label>
+        <input matInput formControlName="location" placeholder="e.g., Koramangala, Bangalore">
+        <mat-error *ngIf="pgForm.get('location')?.hasError('required')">Location is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" placeholder="Full address">
+        <mat-error *ngIf="pgForm.get('address')?.hasError('required')">Address is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Price Range</mat-label>
+        <input matInput formControlName="priceRange" placeholder="e.g., 8,000 - 15,000">
+        <mat-error *ngIf="pgForm.get('priceRange')?.hasError('required')">Price range is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Number</mat-label>
+        <input matInput formControlName="contactNumber" placeholder="10-digit mobile number">
+        <mat-error *ngIf="pgForm.get('contactNumber')?.hasError('pattern')">Enter a valid 10-digit number</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Email</mat-label>
+        <input matInput formControlName="contactEmail" placeholder="Email address">
+        <mat-error *ngIf="pgForm.get('contactEmail')?.hasError('email')">Enter a valid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" placeholder="Detailed description of the PG" rows="4"></textarea>
+        <mat-error *ngIf="pgForm.get('description')?.hasError('required')">Description is required</mat-error>
+        <mat-error *ngIf="pgForm.get('description')?.hasError('maxlength')">Description is too long</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Amenities</mat-label>
+        <mat-select formControlName="amenities" multiple>
+          <mat-option *ngFor="let amenity of commonAmenities" [value]="amenity">
+            {{ amenity }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="pgForm.get('amenities')?.hasError('required')">Select at least one amenity</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Google Maps Embed URL</mat-label>
+        <input matInput formControlName="mapEmbedUrl" placeholder="Paste Google Maps embed URL">
+      </mat-form-field>
+    </div>
+
+    <div class="section-title">
+      <h3>Room Types</h3>
+      <button type="button" mat-mini-fab color="primary" (click)="addRoomType()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div formArrayName="roomTypes">
+      <div *ngFor="let roomType of roomTypesArray.controls; let i = index" [formGroupName]="i" class="room-type-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Room Type</mat-label>
+          <mat-select formControlName="type">
+            <mat-option *ngFor="let type of roomTypes" [value]="type">{{ type }}</mat-option>
+            <mat-option value="custom">Other (Custom)</mat-option>
+          </mat-select>
+          <mat-error *ngIf="roomTypesArray.at(i).get('type')?.hasError('required')">Room type is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Price (₹/month)</mat-label>
+          <input matInput type="number" formControlName="price">
+          <mat-error *ngIf="roomTypesArray.at(i).get('price')?.hasError('required')">Price is required</mat-error>
+          <mat-error *ngIf="roomTypesArray.at(i).get('price')?.hasError('min')">Price must be positive</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Availability</mat-label>
+          <input matInput type="number" formControlName="availability">
+          <mat-error *ngIf="roomTypesArray.at(i).get('availability')?.hasError('required')">Availability is required</mat-error>
+          <mat-error *ngIf="roomTypesArray.at(i).get('availability')?.hasError('min')">Cannot be negative</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <input matInput formControlName="description" placeholder="Optional details">
+        </mat-form-field>
+
+        <button type="button" mat-icon-button color="warn" (click)="removeRoomType(i)" [disabled]="roomTypesArray.length <= 1">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <h3>Images</h3>
+      <button type="button" mat-mini-fab color="primary" (click)="addImage()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div formArrayName="images">
+      <div *ngFor="let image of imagesArray.controls; let i = index" [formGroupName]="i" class="image-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Image URL</mat-label>
+          <input matInput formControlName="url" placeholder="Enter image URL">
+          <mat-error *ngIf="imagesArray.at(i).get('url')?.hasError('required')">Image URL is required</mat-error>
+        </mat-form-field>
+
+        <button type="button" mat-icon-button color="warn" (click)="removeImage(i)" [disabled]="imagesArray.length <= 1">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button (click)="onNoClick()">Cancel</button>
+    <button type="submit" mat-raised-button color="primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
+  </mat-dialog-actions>
+</form>

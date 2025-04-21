@@ -1,0 +1,135 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  color: #3f51b5;
+  margin-bottom: 10px;
+}
+
+.filter-section {
+  margin-bottom: 30px;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.filter-form mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.loading-container, .error-container, .no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.loading-container p, .error-container p, .no-results p {
+  margin-top: 15px;
+  color: #666;
+}
+
+.error-container mat-icon, .no-results mat-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  margin-bottom: 15px;
+}
+
+.pg-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.pg-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.pg-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pg-thumbnail {
+  height: 200px;
+  object-fit: cover;
+}
+
+.pg-title {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #3f51b5;
+}
+
+.pg-location {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.pg-location mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 4px;
+}
+
+.pg-description {
+  color: #666;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.pg-price {
+  font-weight: bold;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.pg-amenities {
+  margin-top: 10px;
+}
+
+.pg-amenities mat-chip {
+  font-size: 12px;
+  min-height: 26px;
+}
+
+@media (max-width: 768px) {
+  .pg-cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .pg-cards-container {
+    grid-template-columns: 1fr;
+  }
+}

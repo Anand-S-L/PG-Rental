@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #3f51b5;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>PG Rental Website - Test Page</h1>
+  
+  <div class="card">
+    <h2>Server Status</h2>
+    <p>If you can see this page, the frontend server is working correctly.</p>
+    <p>Time: <span id="current-time"></span></p>
+  </div>
+
+  <div class="card">
+    <h2>Test Backend Connection</h2>
+    <button id="test-button">Test Backend Connection</button>
+    <p id="test-result">Click the button to test the connection to the backend server.</p>
+  </div>
+
+  <script>
+    // Display current time
+    document.getElementById('current-time').textContent = new Date().toLocaleString();
+
+    // Test backend connection
+    document.getElementById('test-button').addEventListener('click', function() {
+      const resultElement = document.getElementById('test-result');
+      resultElement.textContent = 'Testing connection to backend...';
+
+      fetch('http://localhost:8000')
+        .then(response => {
+          if (response.ok) {
+            return response.text().then(text => {
+              resultElement.textContent = 'Connection successful! Response: ' + text;
+            });
+          } else {
+            resultElement.textContent = 'Connection failed. Status: ' + response.status;
+          }
+        })
+        .catch(error => {
+          resultElement.textContent = 'Connection error: ' + error.message;
+        });
+    });
+  </script>
+</body>
+</html>

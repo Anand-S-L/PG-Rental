@@ -1,0 +1,119 @@
+<div class="detail-container">
+  <button mat-icon-button class="back-button" routerLink="/">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading PG details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadPGDetails(route.snapshot.paramMap.get('id')!)">Try Again</button>
+  </div>
+
+  <div *ngIf="!loading && !error && pg" class="pg-detail">
+    <div class="pg-header">
+      <h1>{{ pg.title }}</h1>
+      <div class="pg-location">
+        <mat-icon>location_on</mat-icon>
+        <span>{{ pg.location }}</span>
+      </div>
+    </div>
+
+    <div class="pg-image-gallery">
+      <div class="main-image-container">
+        <button mat-icon-button class="nav-button prev" (click)="prevImage()" [disabled]="pg.images.length <= 1">
+          <mat-icon>navigate_before</mat-icon>
+        </button>
+        
+        <img [src]="getCurrentImageUrl()" [alt]="pg.title" class="main-image">
+        
+        <button mat-icon-button class="nav-button next" (click)="nextImage()" [disabled]="pg.images.length <= 1">
+          <mat-icon>navigate_next</mat-icon>
+        </button>
+      </div>
+      
+      <div *ngIf="pg.images.length > 1" class="image-thumbnails">
+        <img 
+          *ngFor="let image of pg.images; let i = index" 
+          [src]="image" 
+          [alt]="pg.title + ' image ' + (i + 1)" 
+          class="thumbnail" 
+          [class.active]="i === currentImageIndex"
+          (click)="goToImage(i)">
+      </div>
+    </div>
+
+    <div class="pg-details-grid">
+      <div class="pg-info-section">
+        <h2>Description</h2>
+        <p>{{ pg.description }}</p>
+        
+        <h2>Amenities</h2>
+        <div class="amenities-list">
+          <div *ngFor="let amenity of pg.amenities" class="amenity-item">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ amenity }}</span>
+          </div>
+        </div>
+        
+        <h2>Contact Information</h2>
+        <div class="contact-info">
+          <div *ngIf="pg.contactNumber" class="contact-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ pg.contactNumber }}</span>
+          </div>
+          <div *ngIf="pg.contactEmail" class="contact-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ pg.contactEmail }}</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon>place</mat-icon>
+            <span>{{ pg.address }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pg-pricing-section">
+        <h2>Room Types & Pricing</h2>
+        
+        <mat-card *ngFor="let room of pg.roomTypes" class="room-card">
+          <mat-card-header>
+            <mat-card-title>{{ room.type }}</mat-card-title>
+            <mat-card-subtitle>
+              <span class="availability" [class.available]="room.availability > 0" [class.unavailable]="room.availability === 0">
+                {{ room.availability > 0 ? room.availability + ' Available' : 'Currently Full' }}
+              </span>
+            </mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content>
+            <p class="room-price">₹{{ room.price }} / month</p>
+            <p *ngIf="room.description">{{ room.description }}</p>
+          </mat-card-content>
+          
+          <mat-card-actions *ngIf="room.availability > 0">
+            <button mat-raised-button color="primary">Book Now</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+    <div *ngIf="sanitizedMapUrl" class="map-section">
+      <h2>Location</h2>
+      <iframe 
+        [src]="sanitizedMapUrl" 
+        width="100%" 
+        height="400" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Google Maps Location">
+      </iframe>
+    </div>
+  </div>
+</div>

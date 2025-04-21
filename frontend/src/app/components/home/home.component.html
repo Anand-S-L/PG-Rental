@@ -1,0 +1,111 @@
+<div class="home-container">
+  <div class="page-header">
+    <h1>Find Your Perfect PG Accommodation</h1>
+    <p>Browse through our collection of quality PG accommodations and find your next home.</p>
+  </div>
+  
+  <div class="filter-section">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>filter_list</mat-icon> Filter Options
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <div class="filter-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Location</mat-label>
+            <mat-select formControlName="location">
+              <mat-option value="">All Locations</mat-option>
+              <mat-option *ngFor="let location of locations" [value]="location">
+                {{ location }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Min Price</mat-label>
+            <input matInput type="number" formControlName="minPrice" placeholder="Min Price">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Max Price</mat-label>
+            <input matInput type="number" formControlName="maxPrice" placeholder="Max Price">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Room Type</mat-label>
+            <mat-select formControlName="roomType">
+              <mat-option value="">All Types</mat-option>
+              <mat-option *ngFor="let type of roomTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Amenities</mat-label>
+            <mat-select formControlName="amenities" multiple>
+              <mat-option *ngFor="let amenity of amenities" [value]="amenity">
+                {{ amenity }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        
+        <div class="filter-actions">
+          <button type="submit" mat-raised-button color="primary">Apply Filters</button>
+          <button type="button" mat-button (click)="resetFilters()">Reset</button>
+        </div>
+      </form>
+    </mat-expansion-panel>
+  </div>
+  
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading PG listings...</p>
+  </div>
+  
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadPGs()">Try Again</button>
+  </div>
+  
+  <div *ngIf="!loading && !error" class="pg-cards-container">
+    <div *ngIf="pgs.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <h3>No PG Accommodations Found</h3>
+      <p>Try adjusting your filters or check back later.</p>
+    </div>
+    
+    <mat-card *ngFor="let pg of pgs" class="pg-card" [routerLink]="['/pg', pg.id]">
+      <img 
+        mat-card-image 
+        [src]="pg.images && pg.images.length > 0 ? pg.images[0] : 'https://via.placeholder.com/300x200?text=No+Image'" 
+        [alt]="pg.title" 
+        class="pg-thumbnail">
+      
+      <mat-card-content>
+        <h2 class="pg-title">{{ pg.title }}</h2>
+        <p class="pg-location">
+          <mat-icon>location_on</mat-icon> {{ pg.location }}
+        </p>
+        <p class="pg-description">{{ pg.description | slice:0:100 }}{{ pg.description.length > 100 ? '...' : '' }}</p>
+        <p class="pg-price">₹{{ pg.priceRange }}</p>
+        
+        <div class="pg-amenities">
+          <mat-chip-list>
+            <mat-chip *ngFor="let amenity of pg.amenities.slice(0, 3)" color="primary" selected>{{ amenity }}</mat-chip>
+            <mat-chip *ngIf="pg.amenities.length > 3" color="accent">+{{ pg.amenities.length - 3 }} more</mat-chip>
+          </mat-chip-list>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-button color="primary">VIEW DETAILS</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
