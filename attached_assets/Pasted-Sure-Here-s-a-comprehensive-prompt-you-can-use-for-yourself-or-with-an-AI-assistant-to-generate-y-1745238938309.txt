@@ -1,0 +1,142 @@
+Sure! Here’s a comprehensive prompt you can use (for yourself or with an AI assistant) to generate your PG rental web application, including everything we discussed:
+
+
+---
+
+Prompt: Build a PG Rental Website with Angular + Spring Boot + PostgreSQL
+
+I want to build a PG rental website similar to BookMyPG, but for only two PG locations for now. The website should be dynamic so that I can add more PGs later via an admin panel.
+
+Key Requirements:
+
+1. Frontend: Angular
+
+Built with Angular
+
+Should have routes for:
+
+Home
+
+PG Listings (/pgs)
+
+Individual PG details (/pgs/:id)
+
+Booking form
+
+Contact form
+
+
+Fully responsive (mobile/tablet-friendly)
+
+Integrated with Spring Boot backend
+
+Use proxy.conf.json for API requests in development
+
+Build using ng build --configuration=production
+
+
+2. Backend: Spring Boot
+
+REST API using Spring Boot on port 8000
+
+Exposes endpoints for:
+
+Get all PG listings
+
+Get PG by ID
+
+Post a booking request
+
+Contact admin
+
+
+Embed Angular dist/ in src/main/resources/static
+
+Add fallback controller to route all unknown paths to index.html
+
+
+3. Database: PostgreSQL
+
+Store PG details:
+
+Location
+
+Rooms (with or without bathroom)
+
+Pricing
+
+Availability
+
+
+Store bookings and user messages
+
+
+4. Initial PG Data:
+
+Location: Map link
+
+Rooms:
+
+4 bedrooms with attached bathrooms
+
+1 for ₹9000, 3 for ₹7500
+
+
+1 bedroom with common bathroom for ₹5500
+
+
+Amenities:
+
+2-wheeler parking
+
+200m from hospital/school
+
+Main city location, all necessities nearby
+
+Only 3 months old (neat and clean)
+
+For bachelors only (no car allowed)
+
+
+
+5. Server Deployment:
+
+Host backend on Render (free tier)
+
+Host frontend on Vercel or Firebase Hosting
+
+Serve Angular app using custom server.js (Node.js) or Spring Boot embedded static assets
+
+Configure fallback to index.html to support Angular routing
+
+
+6. server.js Fix (if needed):
+
+Use express.static to serve Angular app
+
+Add wildcard route to serve index.html for all unknown paths
+
+Ensure compatibility with path-to-regexp if using advanced routes
+
+
+7. Tablet-Friendly Development:
+
+Use Gitpod or Replit for full-stack development in the browser
+
+Prefer free hosting services and tools
+
+
+8. Optional Features:
+
+Realtime room availability updates (polling or WebSockets)
+
+Payment gateway integration (e.g., Razorpay, Stripe)
+
+Admin dashboard for updating listings
+
+
+
+---
+
+Want me to scaffold the code or give you the folder structure next?
+
