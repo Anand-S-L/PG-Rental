@@ -1,9 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const PORT = process.env.PORT || 5000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const API_PREFIX = '/api';
 
 // MIME types for different file extensions
 const MIME_TYPES = {
@@ -22,40 +24,54 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   
-  // Normalize URL to prevent directory traversal
-  let urlPath = req.url === '/' ? '/index.html' : req.url;
+  // Parse URL
+  const parsedUrl = url.parse(req.url);
+  const pathname = parsedUrl.pathname;
   
-  // Resolve the file path
-  const filePath = path.join(PUBLIC_DIR, urlPath);
+  // Check if this is an API request
+  if (pathname.startsWith(API_PREFIX)) {
+    handleApiRequest(req, res);
+    return;
+  }
   
-  // Check if file exists
+  // Check if the file exists in public directory
+  const filePath = path.join(PUBLIC_DIR, pathname);
+  
+  // If requesting root, serve index.html directly
+  if (pathname === '/') {
+    serveFile(path.join(PUBLIC_DIR, 'index.html'), res);
+    return;
+  }
+  
+  // First check if the requested file exists
   fs.stat(filePath, (err, stats) => {
-    if (err) {
-      console.error(`File not found: ${filePath}`);
-      // File not found - return 404
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('404 Not Found');
-      return;
-    }
-    
-    // If it's a directory, try to serve index.html
-    if (stats.isDirectory()) {
-      console.log(`Request is for directory: ${filePath}`);
+    if (!err && stats.isFile()) {
+      // File exists, serve it
+      serveFile(filePath, res);
+    } else if (!err && stats.isDirectory()) {
+      // Directory exists, try to serve index.html from it
       const indexPath = path.join(filePath, 'index.html');
-      
       fs.stat(indexPath, (err, stats) => {
-        if (err) {
-          console.error(`Index file not found: ${indexPath}`);
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.end('404 Not Found');
-          return;
+        if (!err && stats.isFile()) {
+          serveFile(indexPath, res);
+        } else {
+          // Fallback to main index.html for SPA routing
+          serveFile(path.join(PUBLIC_DIR, 'index.html'), res);
         }
-        
-        serveFile(indexPath, res);
       });
     } else {
-      // Serve the file
-      serveFile(filePath, res);
+      // File not found, check if it's a dot file (.js, .css, etc)
+      const ext = path.extname(pathname);
+      if (ext) {
+        // It has an extension but doesn't exist, return 404
+        console.error(`File not found: ${filePath}`);
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 Not Found');
+      } else {
+        // No extension, assume it's an SPA route and serve index.html
+        console.log(`Serving index.html for SPA route: ${pathname}`);
+        serveFile(path.join(PUBLIC_DIR, 'index.html'), res);
+      }
     }
   });
 });
@@ -68,12 +84,14 @@ function serveFile(filePath, res) {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
   
-  // Set CORS headers
+  // Set CORS headers and disable CSP
   const headers = {
     'Content-Type': contentType,
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:; font-src * data:;",
+    'X-Content-Type-Options': 'nosniff'
   };
   
   // Read and serve the file
@@ -88,6 +106,30 @@ function serveFile(filePath, res) {
     res.writeHead(200, headers);
     res.end(content);
   });
+}
+
+// Handle API requests (proxy to backend)
+function handleApiRequest(req, res) {
+  console.log(`Handling API request: ${req.url}`);
+  
+  // For now, just return a simple JSON response
+  res.writeHead(200, { 
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:; font-src * data:;",
+    'X-Content-Type-Options': 'nosniff'
+  });
+  
+  res.end(JSON.stringify({ 
+    message: 'API proxy temporarily disabled',
+    endpoint: req.url 
+  }));
+  
+  // In a real app, we would proxy this to the backend server
+  // const backendUrl = `http://localhost:8000${req.url}`;
+  // TODO: Implement proper proxy functionality
 }
 
 // Start the server
