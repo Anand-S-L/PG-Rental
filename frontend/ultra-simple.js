@@ -11,10 +11,21 @@ const server = http.createServer((req, res) => {
   
   // Parse URL
   let url = req.url;
+  
+  // Remove query parameters if any
+  url = url.split('?')[0];
+  
+  // Handle root or test route
   if (url === '/') {
     url = '/index.html';
   } else if (url === '/test') {
     url = '/test.html';
+  }
+  
+  // For SPA routes without file extension
+  if (!path.extname(url) && url !== '/index.html' && url !== '/test.html') {
+    console.log(`SPA route detected: ${url}`);
+    url = '/index.html';
   }
   
   // Determine content type based on file extension
@@ -43,32 +54,25 @@ const server = http.createServer((req, res) => {
   const filePath = path.join(PUBLIC_DIR, url);
   fs.readFile(filePath, (err, content) => {
     if (err) {
-      // If file not found, serve index.html for SPA routes or return 404
+      // If file not found, serve index.html (we've already handled SPA routes above)
       if (err.code === 'ENOENT') {
-        if (!ext) {
-          // No extension means it's likely an SPA route, serve index.html
-          console.log(`Serving index.html for SPA route: ${url}`);
-          fs.readFile(path.join(PUBLIC_DIR, 'index.html'), (err, content) => {
-            if (err) {
-              res.writeHead(500);
-              res.end('Error loading index.html');
-              return;
-            }
-            
-            res.writeHead(200, {
-              'Content-Type': 'text/html',
-              'Access-Control-Allow-Origin': '*',
-              'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:;"
-            });
-            res.end(content, 'utf-8');
+        // Serve index.html for any not found route
+        console.log(`File not found: ${filePath}, serving index.html`);
+        fs.readFile(path.join(PUBLIC_DIR, 'index.html'), (err, content) => {
+          if (err) {
+            res.writeHead(500);
+            res.end('Error loading index.html');
+            return;
+          }
+          
+          res.writeHead(200, {
+            'Content-Type': 'text/html',
+            'Access-Control-Allow-Origin': '*',
+            'Content-Security-Policy': "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data:;"
           });
-          return;
-        } else {
-          // Has extension but file not found
-          res.writeHead(404);
-          res.end('404 Not Found');
-          return;
-        }
+          res.end(content, 'utf-8');
+        });
+        return;
       }
       
       // Server error
