@@ -2,92 +2,96 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
-// MIME types for different file extensions
 const MIME_TYPES = {
   '.html': 'text/html',
-  '.css': 'text/css',
   '.js': 'text/javascript',
+  '.css': 'text/css',
   '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
 };
 
-// Create the HTTP server
 const server = http.createServer((req, res) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log(`Request: ${req.method} ${req.url}`);
   
-  let filePath;
+  // Parse URL to get pathname
+  let pathname = req.url;
   
-  // Special handling for /test routes
-  if (req.url === '/test' || req.url === '/test.html') {
-    filePath = path.join(PUBLIC_DIR, 'test.html');
-  } else if (req.url === '/') {
-    // Root path serves index.html
-    filePath = path.join(PUBLIC_DIR, 'index.html');
-  } else if (req.url.startsWith('/api/')) {
-    // Simple API handling
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    });
-    res.end(JSON.stringify({ message: 'API endpoint', path: req.url }));
-    return;
-  } else {
-    // Try to serve the requested file
-    filePath = path.join(PUBLIC_DIR, req.url);
+  // Remove query string if present
+  const queryIndex = pathname.indexOf('?');
+  if (queryIndex >= 0) {
+    pathname = pathname.substring(0, queryIndex);
   }
   
+  // Handle root path
+  if (pathname === '/') {
+    pathname = '/index.html';
+  }
+  
+  // Create file path
+  const filePath = path.join(PUBLIC_DIR, pathname);
+  const ext = path.extname(filePath).toLowerCase();
+  
   // Check if file exists
-  fs.stat(filePath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      // File not found, serve index.html for SPA routing
-      filePath = path.join(PUBLIC_DIR, 'index.html');
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.log(`File not found: ${filePath}`);
+      
+      // For SPA routing: if no file extension and not index.html, serve index.html
+      if (!ext && pathname !== '/index.html') {
+        serveFile(path.join(PUBLIC_DIR, 'index.html'), res);
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 Not Found');
+      }
+      return;
     }
     
-    // Serve the file
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    
-    fs.readFile(filePath, (err, content) => {
-      if (err) {
-        res.writeHead(500);
-        res.end('Error loading file');
-        return;
-      }
-      
-      // Set headers and send response
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Access-Control-Allow-Origin': '*',
-        'Content-Security-Policy': "default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
-      });
-      res.end(content);
-    });
+    // File exists, serve it
+    serveFile(filePath, res);
   });
 });
 
-// Start the server
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`HTTP server running on port ${PORT}`);
+function serveFile(filePath, res) {
+  const ext = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[ext] || 'text/plain';
   
-  // List files in public directory for debugging
-  console.log(`Public directory: ${PUBLIC_DIR}`);
-  try {
-    const indexExists = fs.existsSync(path.join(PUBLIC_DIR, 'index.html'));
-    console.log(`Index file exists: ${indexExists}`);
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      console.error(`Error reading file: ${filePath}`, err);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('500 Internal Server Error');
+      return;
+    }
     
-    const testExists = fs.existsSync(path.join(PUBLIC_DIR, 'test.html'));
-    console.log(`Test file exists: ${testExists}`);
+    // Add headers for CORS and remove CSP for now
+    const headers = {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+    };
     
-    const files = fs.readdirSync(PUBLIC_DIR);
-    console.log(`Files in public directory: ${JSON.stringify(files)}`);
-  } catch (err) {
-    console.error('Error checking directory:', err);
-  }
+    res.writeHead(200, headers);
+    res.end(content);
+    console.log(`Served: ${filePath}`);
+  });
+}
+
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${PORT}/`);
+  
+  // Log available files
+  const files = fs.readdirSync(PUBLIC_DIR);
+  console.log(`Available files in ${PUBLIC_DIR}:`);
+  files.forEach(file => {
+    console.log(` - ${file}`);
+  });
 });
