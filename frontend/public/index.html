@@ -209,6 +209,7 @@
         <li><a href="#about" class="nav-link">About Us</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
+      <a href="/customer.html" class="btn" style="margin-right: 10px;">Customer Login</a>
       <a href="#" id="admin-link" class="btn">Admin Login</a>
     </nav>
     <div class="mobile-menu-btn">
@@ -435,6 +436,7 @@
                   ${pg.amenities.length > 3 ? `<span class="amenity">+${pg.amenities.length - 3} more</span>` : ''}
                 </div>
                 <button class="btn" onclick="viewPG('${pg.id}')">View Details</button>
+                <a href="/booking.html?pgId=${pg.id}" class="btn" style="background-color: #4caf50; margin-left: 10px;">Book Now</a>
               </div>
             </div>
           `;
@@ -498,8 +500,9 @@
           
           <div style="margin-top: 30px; text-align: center;">
             <h3>Interested in this PG?</h3>
-            <p>Contact us to book a visit or for more information</p>
-            <button class="btn" onclick="contactPG()">Contact Now</button>
+            <p>Book now or contact us for more information</p>
+            <a href="/booking.html?pgId=${pg.id}" class="btn" style="background-color: #4caf50; margin-right: 10px;">Book Now</a>
+            <button class="btn" onclick="contactPG()">Contact Us</button>
           </div>
         `;
         
@@ -737,7 +740,11 @@
       };
       
       window.contactPG = function() {
-        alert('This feature will be implemented in the future. For now, please call +91 9876543210.');
+        const phoneNumber = '+91 9876543210';
+        const email = 'contact@mypgrentals.com';
+        
+        const message = `Contact Information:\n\nPhone: ${phoneNumber}\nEmail: ${email}\n\nYou can also book directly through our online booking system.`;
+        alert(message);
       };
       
       // Load initial data

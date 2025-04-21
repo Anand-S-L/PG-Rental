@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - My PG Rentals</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .header {
+      background-color: #3f51b5;
+      color: white;
+      padding: 0 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo h1 {
+      font-size: 1.8rem;
+      margin: 0;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+    }
+    .nav-links {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 25px 15px;
+      display: block;
+      transition: background-color 0.3s;
+      position: relative;
+    }
+    .nav-link:hover, .nav-link.active {
+      background-color: rgba(255,255,255,0.1);
+    }
+    .nav-link.active:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      right: 15px;
+      height: 3px;
+      background-color: white;
+    }
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .mobile-menu-btn span {
+      width: 100%;
+      height: 2px;
+      background-color: white;
+      border-radius: 5px;
+    }
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: flex;
+      }
+      .nav-links {
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background-color: #3f51b5;
+        flex-direction: column;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: none;
+        z-index: 100;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .navbar {
+        justify-content: flex-end;
+      }
+    }
+    
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      border-bottom: 2px solid #3f51b5;
+      color: #3f51b5;
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: #3f51b5;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #303f9f;
+    }
+    
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .btn-success {
+      background-color: #4caf50;
+    }
+    
+    .btn-success:hover {
+      background-color: #43a047;
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+    
+    .alert-error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+    
+    .alert-success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      background-color: #f5f5f5;
+      padding: 10px 15px;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    
+    .card-content {
+      padding: 15px;
+    }
+    
+    .booking-list {
+      margin-top: 20px;
+    }
+    
+    .booking-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    
+    .booking-header {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .booking-body {
+      padding: 15px;
+    }
+    
+    .booking-footer {
+      padding: 15px;
+      border-top: 1px solid #ddd;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    .status-pending {
+      background-color: #fff8e1;
+      color: #ff8f00;
+    }
+    
+    .status-confirmed {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .status-cancelled {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    
+    .payment-details {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+    }
+    
+    .payment-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .payment-row:last-child {
+      border-bottom: none;
+    }
+    
+    .upi-payment-modal {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      display: none;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .payment-instructions {
+      background-color: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .payment-instructions ol {
+      margin: 10px 0 0 20px;
+      padding: 0;
+    }
+    
+    .payment-instructions li {
+      margin-bottom: 5px;
+    }
+    
+    .upi-id {
+      font-weight: bold;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px dashed #ddd;
+      text-align: center;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <h1>My PG Rentals</h1>
+    </div>
+    <nav class="navbar">
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/#pgs" class="nav-link">PG Listings</a></li>
+        <li><a href="/#about" class="nav-link">About Us</a></li>
+        <li><a href="/#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div id="user-auth">
+        <span id="username-display" style="display: none; color: white; margin-right: 10px;"></span>
+        <button id="logout-btn" class="btn btn-secondary" style="display: none;">Logout</button>
+      </div>
+    </nav>
+    <div class="mobile-menu-btn" id="mobile-menu-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div id="auth-container">
+        <div class="tabs">
+          <div class="tab active" data-tab="login">Login</div>
+          <div class="tab" data-tab="register">Register</div>
+        </div>
+        
+        <div class="tab-content active" id="login-tab">
+          <h2>Login to Your Account</h2>
+          <div id="login-alert" class="alert alert-error" style="display: none;"></div>
+          
+          <form id="login-form">
+            <div class="form-group">
+              <label for="login-username">Username</label>
+              <input type="text" id="login-username" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required>
+            </div>
+            
+            <button type="submit" class="btn">Login</button>
+          </form>
+        </div>
+        
+        <div class="tab-content" id="register-tab">
+          <h2>Create an Account</h2>
+          <div id="register-alert" class="alert alert-error" style="display: none;"></div>
+          
+          <form id="register-form">
+            <div class="form-group">
+              <label for="register-fullname">Full Name</label>
+              <input type="text" id="register-fullname" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="register-username">Username</label>
+              <input type="text" id="register-username" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input type="email" id="register-email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="register-phone">Phone Number</label>
+              <input type="text" id="register-phone" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="register-confirm-password">Confirm Password</label>
+              <input type="password" id="register-confirm-password" required>
+            </div>
+            
+            <button type="submit" class="btn">Register</button>
+          </form>
+        </div>
+      </div>
+      
+      <div id="dashboard-container" style="display: none;">
+        <div class="tabs">
+          <div class="tab active" data-tab="dashboard">Dashboard</div>
+          <div class="tab" data-tab="bookings">My Bookings</div>
+          <div class="tab" data-tab="payments">Payment History</div>
+          <div class="tab" data-tab="profile">My Profile</div>
+        </div>
+        
+        <div class="tab-content active" id="dashboard-tab">
+          <h2>Welcome, <span id="user-name"></span>!</h2>
+          <p>Manage your PG bookings and payments from your dashboard.</p>
+          
+          <div class="card">
+            <div class="card-header">
+              Quick Actions
+            </div>
+            <div class="card-content">
+              <a href="#" class="btn" id="browse-pgs-btn">Browse PGs</a>
+              <a href="#" class="btn" id="new-booking-btn">Book a PG</a>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header">
+              Recent Bookings
+            </div>
+            <div class="card-content" id="recent-bookings">
+              <p>Loading your recent bookings...</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="bookings-tab">
+          <h2>My PG Bookings</h2>
+          <div id="bookings-alert" class="alert alert-error" style="display: none;"></div>
+          
+          <div id="bookings-list" class="booking-list">
+            <p>Loading your bookings...</p>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="payments-tab">
+          <h2>My Payment History</h2>
+          <div id="payments-alert" class="alert alert-error" style="display: none;"></div>
+          
+          <div id="payments-list">
+            <p>Loading your payment history...</p>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="profile-tab">
+          <h2>My Profile</h2>
+          <div id="profile-alert" class="alert alert-error" style="display: none;"></div>
+          
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="profile-fullname">Full Name</label>
+              <input type="text" id="profile-fullname" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="profile-phone">Phone Number</label>
+              <input type="text" id="profile-phone" required>
+            </div>
+            
+            <button type="submit" class="btn">Update Profile</button>
+          </form>
+          
+          <h3 style="margin-top: 40px;">Change Password</h3>
+          <form id="password-form">
+            <div class="form-group">
+              <label for="current-password">Current Password</label>
+              <input type="password" id="current-password" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="new-password">New Password</label>
+              <input type="password" id="new-password" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="confirm-new-password">Confirm New Password</label>
+              <input type="password" id="confirm-new-password" required>
+            </div>
+            
+            <button type="submit" class="btn">Change Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- UPI Payment Modal -->
+    <div class="modal-overlay" id="upi-payment-modal">
+      <div class="upi-payment-modal">
+        <h2>Make Payment via UPI</h2>
+        
+        <div class="payment-instructions">
+          <h3>Instructions:</h3>
+          <ol>
+            <li>Open your UPI app (GPay, PhonePe, Paytm, etc.)</li>
+            <li>Send payment to the UPI ID below</li>
+            <li>Use the payment ID as the reference</li>
+            <li>After payment, enter the UPI transaction ID below</li>
+          </ol>
+        </div>
+        
+        <div>
+          <h3>Payment Details:</h3>
+          <p><strong>Amount:</strong> ₹<span id="payment-amount">0</span></p>
+          <p><strong>Payment ID:</strong> <span id="payment-id"></span></p>
+          <div class="upi-id">
+            <p><strong>UPI ID:</strong> <span id="upi-id">anandsl147@gmail.com</span></p>
+          </div>
+        </div>
+        
+        <form id="verify-payment-form">
+          <input type="hidden" id="booking-id">
+          <div class="form-group">
+            <label for="transaction-id">UPI Transaction ID</label>
+            <input type="text" id="transaction-id" placeholder="Enter the transaction ID from your UPI app" required>
+          </div>
+          
+          <div style="text-align: right; margin-top: 20px;">
+            <button type="button" class="btn btn-secondary" id="cancel-payment-btn">Cancel</button>
+            <button type="submit" class="btn btn-success">Verify Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Base API URL
+    const API_BASE_URL = 'http://localhost:8000/api';
+    
+    // DOM Elements
+    const authContainer = document.getElementById('auth-container');
+    const dashboardContainer = document.getElementById('dashboard-container');
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const profileForm = document.getElementById('profile-form');
+    const passwordForm = document.getElementById('password-form');
+    const loginAlert = document.getElementById('login-alert');
+    const registerAlert = document.getElementById('register-alert');
+    const usernameDisplay = document.getElementById('username-display');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userNameElement = document.getElementById('user-name');
+    const upiPaymentModal = document.getElementById('upi-payment-modal');
+    const paymentAmountElement = document.getElementById('payment-amount');
+    const paymentIdElement = document.getElementById('payment-id');
+    const upiIdElement = document.getElementById('upi-id');
+    const bookingIdElement = document.getElementById('booking-id');
+    const transactionIdInput = document.getElementById('transaction-id');
+    const verifyPaymentForm = document.getElementById('verify-payment-form');
+    const cancelPaymentBtn = document.getElementById('cancel-payment-btn');
+    
+    // Authentication state
+    let currentUser = null;
+    let authToken = null;
+    
+    // Check if user is logged in
+    function checkAuth() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        authToken = token;
+        fetchCurrentUser();
+      }
+    }
+    
+    // Fetch current user data
+    async function fetchCurrentUser() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          currentUser = data.data;
+          showDashboard();
+        } else {
+          // Invalid token, clear and show login
+          localStorage.removeItem('token');
+          authToken = null;
+          showAuth();
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        showAuth();
+      }
+    }
+    
+    // Show authentication forms
+    function showAuth() {
+      authContainer.style.display = 'block';
+      dashboardContainer.style.display = 'none';
+      usernameDisplay.style.display = 'none';
+      logoutBtn.style.display = 'none';
+    }
+    
+    // Show user dashboard
+    function showDashboard() {
+      authContainer.style.display = 'none';
+      dashboardContainer.style.display = 'block';
+      usernameDisplay.textContent = currentUser.username;
+      usernameDisplay.style.display = 'inline';
+      logoutBtn.style.display = 'inline';
+      userNameElement.textContent = currentUser.fullName;
+      
+      // Load dashboard data
+      fetchBookings();
+      fetchPayments();
+      loadProfileData();
+    }
+    
+    // Tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        
+        // Update active tab
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Update active content
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `${tabId}-tab`) {
+            content.classList.add('active');
+          }
+        });
+      });
+    });
+    
+    // Login form submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          authToken = data.data.token;
+          currentUser = data.data.user;
+          
+          // Save token to localStorage
+          localStorage.setItem('token', authToken);
+          
+          // Show dashboard
+          showDashboard();
+          
+          // Reset form
+          loginForm.reset();
+        } else {
+          // Show error
+          loginAlert.textContent = data.message || 'Login failed. Please check your credentials.';
+          loginAlert.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        loginAlert.textContent = 'An error occurred. Please try again.';
+        loginAlert.style.display = 'block';
+      }
+    });
+    
+    // Register form submission
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('register-fullname').value;
+      const username = document.getElementById('register-username').value;
+      const email = document.getElementById('register-email').value;
+      const phone = document.getElementById('register-phone').value;
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('register-confirm-password').value;
+      
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        registerAlert.textContent = 'Passwords do not match';
+        registerAlert.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fullName,
+            username,
+            email,
+            phone,
+            password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          authToken = data.data.token;
+          currentUser = data.data.user;
+          
+          // Save token to localStorage
+          localStorage.setItem('token', authToken);
+          
+          // Show dashboard
+          showDashboard();
+          
+          // Reset form
+          registerForm.reset();
+        } else {
+          // Show error
+          registerAlert.textContent = data.message || 'Registration failed. Please try again.';
+          registerAlert.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        registerAlert.textContent = 'An error occurred. Please try again.';
+        registerAlert.style.display = 'block';
+      }
+    });
+    
+    // Logout button
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      currentUser = null;
+      authToken = null;
+      showAuth();
+    });
+    
+    // Fetch user bookings
+    async function fetchBookings() {
+      if (!authToken) return;
+      
+      const bookingsContainer = document.getElementById('bookings-list');
+      const recentBookingsContainer = document.getElementById('recent-bookings');
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/bookings/me`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const bookings = data.data;
+          
+          if (bookings.length === 0) {
+            bookingsContainer.innerHTML = '<p>You have no bookings yet.</p>';
+            recentBookingsContainer.innerHTML = '<p>You have no bookings yet.</p>';
+            return;
+          }
+          
+          // Render bookings list
+          renderBookings(bookings, bookingsContainer);
+          
+          // Render recent bookings (up to 3)
+          renderBookings(bookings.slice(0, 3), recentBookingsContainer);
+        } else {
+          bookingsContainer.innerHTML = '<p>Failed to load bookings. Please try again.</p>';
+          recentBookingsContainer.innerHTML = '<p>Failed to load recent bookings.</p>';
+        }
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+        bookingsContainer.innerHTML = '<p>An error occurred while loading bookings.</p>';
+        recentBookingsContainer.innerHTML = '<p>An error occurred while loading recent bookings.</p>';
+      }
+    }
+    
+    // Render bookings
+    function renderBookings(bookings, container) {
+      let html = '';
+      
+      bookings.forEach(booking => {
+        const pg = booking.pg || { title: 'PG', location: 'Unknown Location' };
+        const statusClass = `status-${booking.status.toLowerCase()}`;
+        
+        html += `
+          <div class="booking-card">
+            <div class="booking-header">
+              <div>
+                <h3>${pg.title}</h3>
+                <p>${pg.location}</p>
+              </div>
+              <span class="status-badge ${statusClass}">${booking.status}</span>
+            </div>
+            
+            <div class="booking-body">
+              <p><strong>Room Type:</strong> ${booking.roomType}</p>
+              <p><strong>Check-in Date:</strong> ${new Date(booking.checkInDate).toLocaleDateString()}</p>
+              ${booking.checkOutDate ? `<p><strong>Check-out Date:</strong> ${new Date(booking.checkOutDate).toLocaleDateString()}</p>` : ''}
+              
+              <div class="payment-details">
+                <div class="payment-row">
+                  <span>Total Amount:</span>
+                  <span>₹${booking.totalAmount}</span>
+                </div>
+                <div class="payment-row">
+                  <span>Paid Amount:</span>
+                  <span>₹${booking.paidAmount}</span>
+                </div>
+                <div class="payment-row">
+                  <span>Balance:</span>
+                  <span>₹${booking.totalAmount - booking.paidAmount}</span>
+                </div>
+                <div class="payment-row">
+                  <span>Payment Status:</span>
+                  <span>${booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="booking-footer">
+              ${booking.status === 'confirmed' ? `
+                <button class="btn" onclick="viewBookingDetails('${booking.id}')">View Details</button>
+                ${booking.totalAmount > booking.paidAmount ? `
+                  <button class="btn btn-success" onclick="makePayment('${booking.id}', ${booking.totalAmount - booking.paidAmount})">Make Payment</button>
+                ` : ''}
+              ` : ''}
+              ${booking.status === 'pending' ? `
+                <button class="btn btn-secondary" onclick="cancelBooking('${booking.id}')">Cancel</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+    
+    // Fetch payment history
+    async function fetchPayments() {
+      if (!authToken) return;
+      
+      const paymentsContainer = document.getElementById('payments-list');
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/payments/me`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const payments = data.data;
+          
+          if (payments.length === 0) {
+            paymentsContainer.innerHTML = '<p>You have no payment history yet.</p>';
+            return;
+          }
+          
+          // Render payments
+          let html = '';
+          payments.forEach(payment => {
+            html += `
+              <div class="card">
+                <div class="card-header">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Payment on ${new Date(payment.paymentDate).toLocaleDateString()}</span>
+                    <span>₹${payment.amount}</span>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <p><strong>Payment Method:</strong> ${payment.paymentMethod.toUpperCase()}</p>
+                  <p><strong>Status:</strong> ${payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}</p>
+                  <p><strong>Transaction ID:</strong> ${payment.transactionId || 'N/A'}</p>
+                  ${payment.notes ? `<p><strong>Notes:</strong> ${payment.notes}</p>` : ''}
+                </div>
+              </div>
+            `;
+          });
+          
+          paymentsContainer.innerHTML = html;
+        } else {
+          paymentsContainer.innerHTML = '<p>Failed to load payment history. Please try again.</p>';
+        }
+      } catch (error) {
+        console.error('Error fetching payments:', error);
+        paymentsContainer.innerHTML = '<p>An error occurred while loading payment history.</p>';
+      }
+    }
+    
+    // Load profile data
+    function loadProfileData() {
+      if (!currentUser) return;
+      
+      // Populate profile form
+      document.getElementById('profile-fullname').value = currentUser.fullName || '';
+      document.getElementById('profile-email').value = currentUser.email || '';
+      document.getElementById('profile-phone').value = currentUser.phone || '';
+    }
+    
+    // Make a payment
+    function makePayment(bookingId, amount) {
+      if (!authToken) return;
+      
+      // Show payment modal
+      upiPaymentModal.classList.add('active');
+      
+      // Set payment details
+      paymentAmountElement.textContent = amount;
+      const paymentId = `PG_${Date.now()}`;
+      paymentIdElement.textContent = paymentId;
+      bookingIdElement.value = bookingId;
+      transactionIdInput.value = '';
+    }
+    
+    // Cancel payment
+    cancelPaymentBtn.addEventListener('click', () => {
+      upiPaymentModal.classList.remove('active');
+    });
+    
+    // Verify payment
+    verifyPaymentForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const bookingId = bookingIdElement.value;
+      const paymentId = paymentIdElement.textContent;
+      const transactionId = transactionIdInput.value;
+      const amount = parseFloat(paymentAmountElement.textContent);
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/upi/verify`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            bookingId,
+            paymentId,
+            transactionId,
+            amount
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Close modal
+          upiPaymentModal.classList.remove('active');
+          
+          // Refresh bookings and payments
+          fetchBookings();
+          fetchPayments();
+          
+          // Show success message
+          alert('Payment verified successfully!');
+        } else {
+          alert(data.message || 'Failed to verify payment. Please try again.');
+        }
+      } catch (error) {
+        console.error('Payment verification error:', error);
+        alert('An error occurred while verifying payment. Please try again.');
+      }
+    });
+    
+    // View booking details
+    function viewBookingDetails(bookingId) {
+      // TODO: Implement booking details view
+      alert(`View details for booking: ${bookingId}`);
+    }
+    
+    // Cancel booking
+    async function cancelBooking(bookingId) {
+      if (!authToken) return;
+      
+      if (confirm('Are you sure you want to cancel this booking?')) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/cancel`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            alert('Booking cancelled successfully.');
+            fetchBookings();
+          } else {
+            alert(data.message || 'Failed to cancel booking. Please try again.');
+          }
+        } catch (error) {
+          console.error('Booking cancellation error:', error);
+          alert('An error occurred while cancelling booking. Please try again.');
+        }
+      }
+    }
+    
+    // Make these functions available globally
+    window.makePayment = makePayment;
+    window.viewBookingDetails = viewBookingDetails;
+    window.cancelBooking = cancelBooking;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+    });
+  </script>
+</body>
+</html>

@@ -1,55 +1,99 @@
-const express = require('express');
-const path = require('path');
+const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
+const PUBLIC_DIR = path.join(__dirname, 'public');
 
-const staticDir = path.join(__dirname, 'dist/pg-rental-frontend');
-const indexPath = path.join(staticDir, 'index.html');
+// Map file extensions to content types
+const contentTypes = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml'
+};
 
-// Check if the index.html file exists and log the result
-console.log(`Checking if index.html exists at: ${indexPath}`);
-console.log(`Index file exists: ${fs.existsSync(indexPath)}`);
-
-// Print directory contents
-fs.readdir(staticDir, (err, files) => {
-  if (err) {
-    console.error('Error reading directory:', err);
-  } else {
-    console.log('Directory contents:', files);
-  }
-});
-
-// Basic logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  next();
-});
-
-// Enable CORS
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-
-// Serve static files
-app.use(express.static(staticDir));
-
-// All routes - just send the index.html file
-app.use('*', (req, res) => {
-  console.log(`Serving index.html for: ${req.originalUrl}`);
+// Create HTTP server
+const server = http.createServer((req, res) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send('index.html file not found');
+  let filePath;
+  
+  // Parse the URL (remove query parameters)
+  let url = req.url;
+  if (url.includes('?')) {
+    url = url.split('?')[0];
   }
+  
+  // Determine file path based on URL
+  if (url === '/') {
+    filePath = path.join(PUBLIC_DIR, 'index.html');
+  } else {
+    filePath = path.join(PUBLIC_DIR, url);
+  }
+  
+  // Get file extension
+  const extname = path.extname(filePath).toLowerCase();
+  
+  // Default to text/html if no extension or unknown extension
+  const contentType = contentTypes[extname] || 'text/html';
+  
+  // Check if file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.log(`File not found: ${filePath}`);
+      
+      // If route has no extension, serve index.html (SPA handling)
+      if (!extname && url !== '/') {
+        filePath = path.join(PUBLIC_DIR, 'index.html');
+        serveFile(filePath, res, contentType);
+      } else {
+        // File not found
+        res.writeHead(404);
+        res.end('404 Not Found');
+      }
+      return;
+    }
+    
+    // File exists, serve it
+    serveFile(filePath, res, contentType);
+  });
 });
+
+// Helper function to serve files
+function serveFile(filePath, res, contentType) {
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      console.error(`Error reading file: ${filePath}`, err);
+      res.writeHead(500);
+      res.end('Server Error');
+      return;
+    }
+    
+    // Set headers and send content
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end(content);
+    console.log(`Served: ${filePath}`);
+  });
+}
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Frontend server running on port ${PORT}`);
-  console.log(`Static files served from: ${staticDir}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:${PORT}/`);
+  
+  // Log files in public directory
+  try {
+    const files = fs.readdirSync(PUBLIC_DIR);
+    console.log(`Contents of ${PUBLIC_DIR}:`, files);
+  } catch (err) {
+    console.error('Error reading directory:', err);
+  }
 });

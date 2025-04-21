@@ -1,7 +1,25 @@
 const express = require('express');
 const cors = require('cors');
 const pgRoutes = require('./routes/pg.routes');
+const userRoutes = require('./routes/user.routes');
+const authRoutes = require('./routes/auth.routes');
+const bookingRoutes = require('./routes/booking.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const upiRoutes = require('./routes/upi.routes');
 const authMiddleware = require('./middleware/auth.middleware');
+
+// Create admin user if not exists
+const User = require('./models/user.model');
+if (!User.findByUsername('admin')) {
+  User.create({
+    username: 'admin',
+    email: 'admin@example.com',
+    password: 'admin123',
+    fullName: 'Administrator',
+    role: 'admin'
+  });
+  console.log('Admin user created');
+}
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -19,29 +37,11 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/pgs', pgRoutes);
-
-// Basic authentication endpoint
-app.post('/api/auth/login', (req, res) => {
-  const { username, password } = req.body;
-  
-  // For demo purposes, using hardcoded credentials
-  // In a real app, you would validate against a database
-  if (username === 'admin' && password === 'admin123') {
-    // Generate a simple token (in a real app, use JWT)
-    const token = Buffer.from(`${username}:${Date.now()}`).toString('base64');
-    
-    return res.json({
-      success: true,
-      token,
-      user: { username }
-    });
-  }
-  
-  return res.status(401).json({
-    success: false,
-    message: 'Invalid credentials'
-  });
-});
+app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/upi', upiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
