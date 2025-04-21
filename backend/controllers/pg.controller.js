@@ -15,7 +15,7 @@ exports.findAll = (req, res) => {
     res.json(pgs);
   } catch (err) {
     console.error('Error in findAll:', err);
-    return res.status(500).json({ message: 'Error retrieving PGs', error: err.message });
+    res.status(500).json({ message: 'Error retrieving PGs', error: err.message });
   }
 };
 
