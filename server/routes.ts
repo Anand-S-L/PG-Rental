@@ -133,6 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Booking routes
   app.post("/api/book-room", isAuthenticated, async (req, res) => {
+    console.log("Session user:", req.user);
     try {
       const schema = z.object({
         roomId: z.number(),
