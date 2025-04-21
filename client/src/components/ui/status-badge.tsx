@@ -1,50 +1,30 @@
 import { cn } from "@/lib/utils";
-
-type RoomStatus = 'Available' | 'Pending' | 'Booked';
-type BookingStatus = 'Pending' | 'Confirmed' | 'Cancelled';
-type PaymentStatus = 'Pending' | 'Verified';
+import { Badge } from "@/components/ui/badge";
 
 interface StatusBadgeProps {
-  status: RoomStatus | BookingStatus | PaymentStatus;
+  status: "Available" | "Pending" | "Booked" | "Confirmed" | "Cancelled";
   className?: string;
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  let badgeStyles = '';
-  let dotColor = '';
-  let statusText = status;
-
-  switch (status) {
-    case 'Available':
-      badgeStyles = 'bg-green-100 text-green-800';
-      dotColor = 'bg-green-500';
-      break;
-    case 'Pending':
-      badgeStyles = 'bg-yellow-100 text-yellow-800';
-      dotColor = 'bg-yellow-500';
-      break;
-    case 'Booked':
-    case 'Confirmed':
-      badgeStyles = 'bg-green-100 text-green-800';
-      dotColor = 'bg-green-500';
-      break;
-    case 'Cancelled':
-      badgeStyles = 'bg-red-100 text-red-800';
-      dotColor = 'bg-red-500';
-      break;
-    case 'Verified':
-      badgeStyles = 'bg-green-100 text-green-800';
-      dotColor = 'bg-green-500';
-      break;
-    default:
-      badgeStyles = 'bg-gray-100 text-gray-800';
-      dotColor = 'bg-gray-500';
-  }
+  const variants = {
+    Available: "bg-green-100 text-green-800 hover:bg-green-100",
+    Pending: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100",
+    Booked: "bg-red-100 text-red-800 hover:bg-red-100",
+    Confirmed: "bg-blue-100 text-blue-800 hover:bg-blue-100",
+    Cancelled: "bg-gray-100 text-gray-800 hover:bg-gray-100",
+  };
 
   return (
-    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium", badgeStyles, className)}>
-      <span className={cn("w-2 h-2 mr-1 rounded-full", dotColor)}></span>
-      {statusText}
-    </span>
+    <Badge 
+      variant="outline" 
+      className={cn(
+        "font-medium", 
+        variants[status], 
+        className
+      )}
+    >
+      {status}
+    </Badge>
   );
 }

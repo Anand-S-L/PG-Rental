@@ -14,6 +14,7 @@ import BookingConfirmation from "@/pages/booking-confirmation";
 import UserDashboard from "@/pages/user-dashboard";
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
+import AdminRoomsPage from "@/pages/admin/rooms";
 import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 
@@ -30,6 +31,7 @@ function Router() {
       <ProtectedRoute path="/dashboard" component={UserDashboard} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
+      <Route path="/admin/rooms" component={AdminRoomsPage} />
       <Route component={NotFound} />
     </Switch>
   );

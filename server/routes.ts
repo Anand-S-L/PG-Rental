@@ -323,6 +323,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all rooms for admin
+  app.get("/api/admin/rooms", isAdmin, async (req, res) => {
+    try {
+      const rooms = await db.select().from(db.schema.rooms);
+      
+      // Get PG location for each room
+      const enrichedRooms = await Promise.all(
+        rooms.map(async (room) => {
+          const pgLocation = await storage.getPgLocationById(room.pgLocationId);
+          return {
+            ...room,
+            pgLocation,
+          };
+        })
+      );
+      
+      res.json(enrichedRooms);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+      res.status(500).json({ message: "Failed to fetch rooms" });
+    }
+  });
+
   // Add a new PG
   app.post("/api/admin/add-pg", isAdmin, async (req, res) => {
     try {
