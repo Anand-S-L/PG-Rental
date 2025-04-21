@@ -1,0 +1,392 @@
+Here is the fully updated, extremely detailed prompt based on all your requirements and refinements. This includes:
+
+Basic authentication
+
+Session-based user separation
+
+Per-room tracking with unique room numbers and statuses
+
+Room count management per PG
+
+Manual payment via UPI
+
+Admin panel with verification and control
+
+All without enforcing a specific tech stack
+
+
+
+---
+
+Prompt: PG Rental Website (Full Specification)
+
+> Build a full-featured, production-ready Paying Guest (PG) rental website that allows customers to browse, book, and pay for PG rooms in different locations. The system must be designed to support multiple PG locations, starting with 2 and allowing more to be added later dynamically via an admin dashboard.
+
+
+
+The solution must support separate user sessions, manual payment verification, room-level booking management, and a clean, mobile-first interface. No specific tech stack is mandated — developer may choose their preferred stack. Use PostgreSQL as the database, with the provided hosted credentials.
+
+
+---
+
+Core Functionalities
+
+1. Homepage
+
+Show a list of all available PGs.
+
+Each PG should display:
+
+PG name
+
+Brief description
+
+Location (with Google Maps)
+
+Price range
+
+Number of available rooms
+
+Thumbnail images or photo gallery
+
+
+Call-to-action buttons:
+
+View Details
+
+Book Now
+
+Login/Register
+
+
+Clean and modern UI with responsive design.
+
+
+
+---
+
+2. Room Details Page (Per PG Location)
+
+PG Location Example (provided):
+
+Map: https://maps.app.goo.gl/KMjGd1uU2hN1kkU39
+
+Rooms:
+
+1 room with attached bath: ₹9000
+
+3 rooms with attached bath: ₹7500
+
+1 room with shared bath: ₹5500
+
+
+Common bath: 1
+
+
+Additional Info:
+
+Amenities: 2-wheeler parking, near hospitals/schools, main road access
+
+House: Newly constructed (3 months old), clean
+
+Rule: Bachelors only, 2-wheelers allowed, no cars
+
+
+Each room must have:
+
+Unique room number
+
+Status: Available, Booked, Pending Verification
+
+Linked to PG location and pricing
+
+
+
+
+---
+
+3. Customer Features
+
+Authentication
+
+Basic form-based login and registration (no JWT).
+
+Passwords should be securely stored (hashed).
+
+Session-based authentication:
+
+Each user must have a separate session
+
+Prevent data leakage across sessions
+
+
+
+Dashboard
+
+Booking status:
+
+Room number
+
+Location
+
+Payment status
+
+Verification status
+
+
+Payment history:
+
+UPI reference
+
+Uploaded screenshot (if applicable)
+
+
+Option to update profile details
+
+
+Booking Flow
+
+Customer browses available rooms by PG
+
+Selects a room (only Available rooms can be booked)
+
+Sees UPI instructions for manual payment
+
+UPI ID: anandsl147@okaxis
+
+
+Uploads UPI payment reference or screenshot
+
+Room marked as Pending Verification
+
+On admin confirmation:
+
+Room status becomes Booked
+
+User notified via dashboard
+
+
+
+
+---
+
+4. Admin Panel
+
+Admin Authentication
+
+Separate login page
+
+Basic session-based login
+
+Prevent unauthorized access to admin routes
+
+
+Admin Dashboard Capabilities
+
+Manage PGs:
+
+Add new PGs
+
+Update or delete existing PGs
+
+
+Manage Rooms:
+
+Add/edit/delete rooms
+
+Assign room number, price, status
+
+View real-time room availability
+
+
+Manage Bookings:
+
+View all bookings (filter by PG, status)
+
+View customer name, room number, and payment reference
+
+
+Verify Payments:
+
+Review UPI references or screenshots
+
+Mark room as Confirmed after verification
+
+Automatically update room status and user booking
+
+
+Track Total Rooms:
+
+Show total and available room count per PG
+
+Automatically update on booking/verification
+
+
+
+
+---
+
+Database Requirements
+
+Use PostgreSQL (free hosted):
+
+PGHOST='ep-nameless-union-a4wbxtrx-pooler.us-east-1.aws.neon.tech'
+PGDATABASE='neondb'
+PGUSER='neondb_owner'
+PGPASSWORD='npg_ZmvPOli5gV7z'
+
+
+Schema Overview:
+
+users: id, name, email, password (hashed), role (customer, admin)
+
+pg_locations: id, name, description, address, maps_url
+
+rooms: id, room_number, pg_location_id, price, with_attached_bath, status (Available, Pending, Booked)
+
+bookings: id, user_id, room_id, timestamp, status
+
+payments: id, booking_id, upi_reference, screenshot_url, verified_by_admin (boolean)
+
+
+
+---
+
+API Requirements
+
+Customer APIs
+
+POST /register
+
+POST /login
+
+GET /locations
+
+GET /rooms/:locationId
+
+POST /book-room
+
+POST /upload-payment
+
+
+Admin APIs
+
+POST /admin/login
+
+GET /admin/bookings
+
+GET /admin/customers
+
+POST /admin/verify-payment/:bookingId
+
+POST /admin/add-pg
+
+POST /admin/add-room
+
+PUT /admin/update-room/:roomId
+
+GET /admin/room-count
+
+
+
+---
+
+Frontend Requirements
+
+Clean responsive Single Page Application
+
+Separate views for:
+
+Homepage (PG listings)
+
+PG Details page (rooms per location)
+
+Login/Register
+
+Booking form and instructions
+
+Customer dashboard
+
+Admin dashboard
+
+
+Show room status using color codes or badges
+
+
+
+---
+
+Hosting & Dev Environment
+
+Frontend Hosting (Free):
+
+Firebase Hosting
+
+GitHub Pages
+
+Vercel
+
+
+Backend Hosting (Free):
+
+Render
+
+Railway
+
+Cyclic.sh
+
+
+Database:
+
+Hosted on Neon (PostgreSQL)
+
+
+Development Notes:
+
+Version control via GitHub
+
+SSH key authentication setup for pushing via Termux on Android
+
+Server-side routing fix with server.js for SPA routing (if needed)
+
+
+
+
+---
+
+Payment Flow (Manual via UPI)
+
+UPI ID: anandsl147@okaxis
+
+Customer uploads payment details
+
+Admin views in dashboard
+
+Once verified, system:
+
+Confirms room booking
+
+Changes room status
+
+Notifies customer via dashboard
+
+
+
+
+---
+
+Let me know if you'd like me to generate:
+
+UI wireframes
+
+Backend or frontend code templates
+
+API docs (Swagger/OpenAPI)
+
+SQL schema dump
+
+Setup instructions for hosting (Firebase, Railway, etc.)
+
+
+I'm ready when you are.
+
