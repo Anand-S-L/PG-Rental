@@ -27,6 +27,7 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/pg/:id" component={PgDetailsPage} />
       <ProtectedRoute path="/booking/:roomId" component={BookingPage} />
+      <ProtectedRoute path="/api/book-room" component={BookingPage} />
       <ProtectedRoute path="/booking-confirmation/:bookingId" component={BookingConfirmation} />
       <ProtectedRoute path="/dashboard" component={UserDashboard} />
       <Route path="/admin/login" component={AdminLogin} />
