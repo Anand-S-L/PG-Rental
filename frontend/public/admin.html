@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - PG Rental Website</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .admin-panel {
+      margin-top: 20px;
+    }
+    .pg-item {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .pg-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+    }
+    .pg-content {
+      padding: 20px;
+    }
+    .login-form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .pg-form {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .room-input {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .room-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .room-col {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>PG Rental Website</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/customer.html">Customer Dashboard</a></li>
+        <li><a href="/booking.html">Book Now</a></li>
+        <li><a href="/admin.html" class="active">Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h2>Admin Panel</h2>
+      <p>Manage your PG listings and bookings</p>
+      
+      <div id="login-panel">
+        <div class="login-form">
+          <h3 class="form-title">Admin Login</h3>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter admin password">
+          </div>
+          <p id="login-error" style="color: #f44336; display: none;">Incorrect password</p>
+          <button id="login-btn" class="btn btn-primary">Login</button>
+        </div>
+      </div>
+      
+      <div id="admin-panel" style="display: none;">
+        <div class="admin-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Your PG Listings</h3>
+            <button id="add-pg-btn" class="btn btn-primary">Add New PG</button>
+          </div>
+          
+          <div id="pg-list"></div>
+          
+          <div id="pg-form" class="pg-form" style="display: none;">
+            <h3 id="form-title">Add New PG</h3>
+            <form id="pg-edit-form">
+              <input type="hidden" id="pg-id">
+              
+              <div class="form-group">
+                <label for="pg-title">Title</label>
+                <input type="text" id="pg-title" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="pg-location">Location</label>
+                <input type="text" id="pg-location" class="form-control" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="pg-description">Description</label>
+                <textarea id="pg-description" class="form-control" rows="4"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="pg-image">Image URL</label>
+                <input type="text" id="pg-image" class="form-control" placeholder="Enter image URL">
+              </div>
+              
+              <div class="form-group">
+                <label for="pg-map-link">Google Maps Link</label>
+                <input type="text" id="pg-map-link" class="form-control" placeholder="Enter Google Maps link">
+              </div>
+              
+              <div class="form-group">
+                <label for="pg-amenities">Amenities (comma-separated)</label>
+                <input type="text" id="pg-amenities" class="form-control" placeholder="e.g. WiFi, AC, Parking">
+              </div>
+              
+              <h4>Rooms</h4>
+              <div id="rooms-container"></div>
+              
+              <button type="button" id="add-room-btn" class="btn" style="margin-top: 10px;">Add Room</button>
+              
+              <div style="margin-top: 20px;">
+                <button type="button" id="cancel-form-btn" class="btn" style="background-color: #f5f5f5; color: #333; margin-right: 10px;">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save PG</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <footer class="footer">
+    <p>© 2025 PG Rental Website. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const loginPanel = document.getElementById('login-panel');
+      const adminPanel = document.getElementById('admin-panel');
+      const loginBtn = document.getElementById('login-btn');
+      const passwordInput = document.getElementById('password');
+      const loginError = document.getElementById('login-error');
+      const pgList = document.getElementById('pg-list');
+      const addPgBtn = document.getElementById('add-pg-btn');
+      const pgForm = document.getElementById('pg-form');
+      const formTitle = document.getElementById('form-title');
+      const pgEditForm = document.getElementById('pg-edit-form');
+      const cancelFormBtn = document.getElementById('cancel-form-btn');
+      const addRoomBtn = document.getElementById('add-room-btn');
+      const roomsContainer = document.getElementById('rooms-container');
+      
+      // Admin credentials (in a real app, this would be server-side)
+      const adminPassword = 'admin123';
+      
+      // Sample PG data (in a real app, this would be stored in a database)
+      let pgs = [
+        {
+          id: '1',
+          title: 'Spacious 3-Storey PG in City Center',
+          location: 'Koramangala, Bangalore',
+          description: 'Newly constructed PG, only 3 months old, located in the main city area with all basic necessities nearby. Just 200m from hospitals and schools. Ideal for bachelors with 2-wheelers (no car parking).',
+          rooms: [
+            { type: 'Attached', price: 9000, available: true },
+            { type: 'Attached', price: 7500, available: true },
+            { type: 'Attached', price: 7500, available: false },
+            { type: 'Shared', price: 5500, available: true }
+          ],
+          amenities: ['2-Wheeler Parking', 'Nearby Schools', 'Nearby Hospitals', 'Main City Area', 'Neat & Clean'],
+          image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af',
+          mapLink: 'https://maps.app.goo.gl/KMjGd1uU2hN1kkU39'
+        },
+        {
+          id: '2',
+          title: 'Green View PG for Professionals',
+          location: 'HSR Layout, Bangalore',
+          description: 'Modern PG accommodation in a peaceful neighborhood with excellent connectivity to tech parks. Features clean rooms, good food, and essential amenities for a comfortable stay.',
+          rooms: [
+            { type: 'Attached', price: 10000, available: true },
+            { type: 'Shared', price: 7000, available: true },
+            { type: 'Shared', price: 6500, available: true }
+          ],
+          amenities: ['WiFi', 'Power Backup', 'Laundry', 'Security', 'Meals Included'],
+          image: 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc',
+          mapLink: 'https://maps.app.goo.gl/abcd1234'
+        }
+      ];
+      
+      // Event Listeners
+      loginBtn.addEventListener('click', function() {
+        if (passwordInput.value === adminPassword) {
+          loginPanel.style.display = 'none';
+          adminPanel.style.display = 'block';
+          loginError.style.display = 'none';
+          renderPgList();
+        } else {
+          loginError.style.display = 'block';
+        }
+      });
+      
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          loginBtn.click();
+        }
+      });
+      
+      addPgBtn.addEventListener('click', function() {
+        showAddPgForm();
+      });
+      
+      cancelFormBtn.addEventListener('click', function() {
+        pgForm.style.display = 'none';
+      });
+      
+      addRoomBtn.addEventListener('click', function() {
+        addRoomToForm();
+      });
+      
+      pgEditForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        savePg();
+      });
+      
+      // Functions
+      function renderPgList() {
+        if (pgs.length === 0) {
+          pgList.innerHTML = '<p>No PG listings found. Add your first PG!</p>';
+          return;
+        }
+        
+        let html = '';
+        
+        pgs.forEach(pg => {
+          const availableRooms = pg.rooms.filter(room => room.available).length;
+          const totalRooms = pg.rooms.length;
+          
+          html += `
+            <div class="pg-item">
+              <div class="pg-header">
+                <div>
+                  <h3 style="margin: 0;">${pg.title}</h3>
+                  <p style="margin: 5px 0 0 0; color: #666;">${pg.location}</p>
+                </div>
+                <div>
+                  <button onclick="editPg('${pg.id}')" class="btn btn-primary" style="margin-right: 10px;">Edit</button>
+                  <button onclick="deletePg('${pg.id}')" class="btn" style="background-color: #f44336;">Delete</button>
+                </div>
+              </div>
+              <div class="pg-content">
+                <p><strong>Rooms:</strong> ${availableRooms} available out of ${totalRooms}</p>
+                <p><strong>Amenities:</strong> ${pg.amenities.join(', ')}</p>
+              </div>
+            </div>
+          `;
+        });
+        
+        pgList.innerHTML = html;
+      }
+      
+      function showAddPgForm() {
+        formTitle.textContent = 'Add New PG';
+        document.getElementById('pg-id').value = '';
+        document.getElementById('pg-title').value = '';
+        document.getElementById('pg-location').value = '';
+        document.getElementById('pg-description').value = '';
+        document.getElementById('pg-image').value = '';
+        document.getElementById('pg-map-link').value = '';
+        document.getElementById('pg-amenities').value = '';
+        
+        // Reset rooms
+        roomsContainer.innerHTML = '';
+        addRoomToForm();
+        
+        pgForm.style.display = 'block';
+      }
+      
+      function showEditPgForm(pgId) {
+        const pg = pgs.find(p => p.id === pgId);
+        if (!pg) return;
+        
+        formTitle.textContent = 'Edit PG';
+        document.getElementById('pg-id').value = pg.id;
+        document.getElementById('pg-title').value = pg.title;
+        document.getElementById('pg-location').value = pg.location;
+        document.getElementById('pg-description').value = pg.description;
+        document.getElementById('pg-image').value = pg.image || '';
+        document.getElementById('pg-map-link').value = pg.mapLink || '';
+        document.getElementById('pg-amenities').value = pg.amenities.join(', ');
+        
+        // Populate rooms
+        roomsContainer.innerHTML = '';
+        pg.rooms.forEach(room => {
+          addRoomToForm(room);
+        });
+        
+        pgForm.style.display = 'block';
+      }
+      
+      function addRoomToForm(roomData = null) {
+        const roomElement = document.createElement('div');
+        roomElement.className = 'room-input';
+        
+        roomElement.innerHTML = `
+          <div class="room-row">
+            <div class="room-col">
+              <label>Type</label>
+              <input type="text" class="room-type form-control" value="${roomData ? roomData.type : ''}">
+            </div>
+            <div class="room-col">
+              <label>Price (₹/month)</label>
+              <input type="number" class="room-price form-control" value="${roomData ? roomData.price : ''}" min="0">
+            </div>
+            <div class="room-col">
+              <label>Available</label>
+              <select class="room-available form-control">
+                <option value="true" ${!roomData || roomData.available ? 'selected' : ''}>Yes</option>
+                <option value="false" ${roomData && !roomData.available ? 'selected' : ''}>No</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" class="btn remove-room-btn" style="background-color: #f44336; margin-top: 10px;">Remove Room</button>
+        `;
+        
+        roomElement.querySelector('.remove-room-btn').addEventListener('click', function() {
+          roomElement.remove();
+        });
+        
+        roomsContainer.appendChild(roomElement);
+      }
+      
+      function savePg() {
+        const pgId = document.getElementById('pg-id').value;
+        const title = document.getElementById('pg-title').value;
+        const location = document.getElementById('pg-location').value;
+        const description = document.getElementById('pg-description').value;
+        const image = document.getElementById('pg-image').value;
+        const mapLink = document.getElementById('pg-map-link').value;
+        const amenitiesStr = document.getElementById('pg-amenities').value;
+        
+        // Validation
+        if (!title || !location) {
+          alert('Please fill in all required fields');
+          return;
+        }
+        
+        // Get rooms data
+        const roomElements = roomsContainer.querySelectorAll('.room-input');
+        const rooms = [];
+        
+        roomElements.forEach(roomElement => {
+          const type = roomElement.querySelector('.room-type').value;
+          const price = parseFloat(roomElement.querySelector('.room-price').value);
+          const available = roomElement.querySelector('.room-available').value === 'true';
+          
+          if (type && !isNaN(price)) {
+            rooms.push({ type, price, available });
+          }
+        });
+        
+        if (rooms.length === 0) {
+          alert('Please add at least one room');
+          return;
+        }
+        
+        // Process amenities
+        const amenities = amenitiesStr.split(',')
+          .map(item => item.trim())
+          .filter(item => item.length > 0);
+        
+        // Create PG object
+        const pgData = {
+          id: pgId || String(Date.now()),
+          title,
+          location,
+          description,
+          image,
+          mapLink,
+          amenities,
+          rooms
+        };
+        
+        // Update PG data
+        if (pgId) {
+          // Edit existing PG
+          const index = pgs.findIndex(p => p.id === pgId);
+          if (index !== -1) {
+            pgs[index] = pgData;
+          }
+        } else {
+          // Add new PG
+          pgs.push(pgData);
+        }
+        
+        // Update UI
+        renderPgList();
+        
+        // Hide form
+        pgForm.style.display = 'none';
+      }
+      
+      // Global functions for event handlers
+      window.editPg = function(id) {
+        showEditPgForm(id);
+      };
+      
+      window.deletePg = function(id) {
+        if (confirm('Are you sure you want to delete this PG?')) {
+          pgs = pgs.filter(pg => pg.id !== id);
+          renderPgList();
+        }
+      };
+    });
+  </script>
+</body>
+</html>

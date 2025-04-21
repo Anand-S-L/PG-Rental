@@ -3,940 +3,333 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book PG Accommodation - My PG Rentals</title>
+  <title>Book PG - PG Rental Website</title>
+  <link rel="stylesheet" href="/css/styles.css">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    .header {
-      background-color: #3f51b5;
-      color: white;
-      padding: 0 20px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-    .logo h1 {
-      font-size: 1.8rem;
-      margin: 0;
-    }
-    .navbar {
-      display: flex;
-      align-items: center;
-    }
-    .nav-links {
-      display: flex;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .nav-link {
-      color: white;
-      text-decoration: none;
-      padding: 25px 15px;
-      display: block;
-      transition: background-color 0.3s;
-      position: relative;
-    }
-    .nav-link:hover, .nav-link.active {
-      background-color: rgba(255,255,255,0.1);
-    }
-    .nav-link.active:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 15px;
-      right: 15px;
-      height: 3px;
+    .booking-form {
       background-color: white;
-    }
-    .container {
-      background: white;
+      padding: 25px;
       border-radius: 8px;
-      padding: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    .btn {
-      display: inline-block;
-      background-color: #3f51b5;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 4px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .btn:hover {
-      background-color: #303f9f;
-    }
-    .btn-secondary {
-      background-color: #f5f5f5;
-      color: #333;
-    }
-    .btn-secondary:hover {
-      background-color: #e0e0e0;
-    }
-    .btn-success {
-      background-color: #4caf50;
-    }
-    .btn-success:hover {
-      background-color: #43a047;
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 0 -10px;
-    }
-    .col {
-      flex: 1;
-      padding: 0 10px;
-      min-width: 300px;
-    }
-    .pg-image {
-      width: 100%;
-      height: 200px;
-      background-size: cover;
-      background-position: center;
-      border-radius: 4px;
-      margin-bottom: 15px;
-    }
-    .room-option {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      margin-bottom: 15px;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-    .room-option:hover {
-      border-color: #3f51b5;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .room-option.selected {
-      border-color: #4caf50;
-      background-color: #e8f5e9;
-    }
-    .summary-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .summary-item:last-child {
-      border-bottom: none;
-    }
-    .total {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 2px solid #ddd;
-    }
-    .alert {
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 15px;
-    }
-    .alert-error {
-      background-color: #ffebee;
-      color: #c62828;
-      border: 1px solid #ffcdd2;
-    }
-    .alert-success {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-      border: 1px solid #c8e6c9;
-    }
-    .loading {
-      text-align: center;
-      padding: 40px;
-    }
-    /* Payment section */
-    .payment-methods {
       margin-top: 20px;
     }
-    .payment-method {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .payment-method:hover {
-      border-color: #3f51b5;
-      background-color: #f5f5f5;
-    }
-    .payment-method.selected {
-      border-color: #4caf50;
-      background-color: #e8f5e9;
-    }
-    .payment-icon {
-      margin-right: 10px;
-      vertical-align: middle;
-      width: 30px;
-      height: 30px;
-    }
-    /* UPI payment section */
-    .upi-details {
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      margin-top: 15px;
-    }
-    .upi-id {
-      font-weight: bold;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 4px;
-      border: 1px dashed #ddd;
-      text-align: center;
-      margin: 15px 0;
-    }
-    /* Booking steps */
-    .steps {
-      display: flex;
+    .pg-summary {
       margin-bottom: 20px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
     }
-    .step {
-      flex: 1;
-      text-align: center;
-      padding: 10px;
-      position: relative;
+    .section-title {
+      margin-top: 25px;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+    .price-summary {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .total-row {
       font-weight: bold;
-      color: #999;
+      border-top: 1px solid #ddd;
+      padding-top: 8px;
+      margin-top: 8px;
     }
-    .step.active {
-      color: #3f51b5;
-    }
-    .step.completed {
-      color: #4caf50;
-    }
-    .step::after {
-      content: '';
-      position: absolute;
-      bottom: -11px;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background-color: transparent;
-    }
-    .step.active::after {
-      background-color: #3f51b5;
-    }
-    .step.completed::after {
-      background-color: #4caf50;
-    }
-    .booking-section {
-      display: none;
-    }
-    .booking-section.active {
-      display: block;
-    }
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .col {
-        flex: 100%;
-      }
+    .upi-info {
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
     }
   </style>
 </head>
 <body>
   <header class="header">
-    <div class="logo">
-      <h1>My PG Rentals</h1>
-    </div>
-    <nav class="navbar">
+    <h1>PG Rental Website</h1>
+    <nav>
       <ul class="nav-links">
-        <li><a href="/" class="nav-link">Home</a></li>
-        <li><a href="/customer.html" class="nav-link">Dashboard</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/customer.html">Customer Dashboard</a></li>
+        <li><a href="/booking.html" class="active">Book Now</a></li>
+        <li><a href="/admin.html">Admin</a></li>
       </ul>
-      <div id="user-auth">
-        <span id="username-display" style="display: none; color: white; margin-right: 10px;"></span>
-        <a href="/customer.html" class="btn btn-secondary">Back to Dashboard</a>
-      </div>
     </nav>
   </header>
 
   <main>
     <div class="container">
-      <h2>Book Your PG Accommodation</h2>
+      <h2>Book PG Accommodation</h2>
+      <p>Fill out the form below to book your PG accommodation</p>
       
-      <div class="steps">
-        <div class="step active" id="step-1">1. Select Room</div>
-        <div class="step" id="step-2">2. Enter Details</div>
-        <div class="step" id="step-3">3. Review & Pay</div>
-        <div class="step" id="step-4">4. Confirmation</div>
-      </div>
-      
-      <div id="loading" class="loading">
-        <div class="spinner" style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3f51b5; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-        <p>Loading PG details...</p>
-      </div>
-      
-      <div id="error-message" class="alert alert-error" style="display: none;"></div>
-      
-      <!-- Step 1: Select Room -->
-      <div id="room-selection" class="booking-section active">
-        <div class="row">
-          <div class="col">
-            <div id="pg-details">
-              <!-- PG details will be loaded here -->
-            </div>
-          </div>
-          <div class="col">
-            <h3>Select Room Type</h3>
-            <div id="room-options">
-              <!-- Room options will be loaded here -->
-            </div>
-          </div>
+      <div class="booking-form">
+        <div id="pg-info" class="pg-summary">
+          <h3 id="pg-title">Loading...</h3>
+          <p id="pg-location"></p>
+          <p id="room-details"></p>
         </div>
-        
-        <div style="text-align: right; margin-top: 20px;">
-          <a href="/customer.html" class="btn btn-secondary" style="margin-right: 10px;">Cancel</a>
-          <button id="next-to-details" class="btn" disabled>Next: Enter Details</button>
-        </div>
-      </div>
-      
-      <!-- Step 2: Enter Details -->
-      <div id="booking-details" class="booking-section">
-        <h3>Booking Details</h3>
         
         <form id="booking-form">
-          <div class="row">
-            <div class="col">
-              <div class="form-group">
-                <label for="check-in-date">Check-in Date</label>
-                <input type="date" id="check-in-date" required min="">
-              </div>
-              
-              <div class="form-group">
-                <label for="duration">Stay Duration (months)</label>
-                <select id="duration" required>
-                  <option value="1">1 Month</option>
-                  <option value="2">2 Months</option>
-                  <option value="3">3 Months</option>
-                  <option value="6">6 Months</option>
-                  <option value="12">12 Months</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label for="special-requests">Special Requests (optional)</label>
-                <textarea id="special-requests" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
-              </div>
+          <input type="hidden" id="pg-id">
+          <input type="hidden" id="room-type">
+          
+          <h4 class="section-title">Personal Information</h4>
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-control" required>
+          </div>
+          
+          <h4 class="section-title">Booking Details</h4>
+          <div class="form-group">
+            <label for="check-in-date">Check-in Date</label>
+            <input type="date" id="check-in-date" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="duration">Duration (months)</label>
+            <select id="duration" class="form-control" required>
+              <option value="">Select duration</option>
+              <option value="1">1 month</option>
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="12">12 months</option>
+            </select>
+          </div>
+          
+          <div id="price-summary" class="price-summary">
+            <h4 style="margin-top: 0;">Price Summary</h4>
+            <div class="price-row">
+              <span>Room Rent (per month)</span>
+              <span id="monthly-rent">₹0</span>
             </div>
-            
-            <div class="col">
-              <div id="booking-summary">
-                <h3>Booking Summary</h3>
-                <div class="summary-item">
-                  <span>PG:</span>
-                  <span id="summary-pg-name"></span>
-                </div>
-                <div class="summary-item">
-                  <span>Room Type:</span>
-                  <span id="summary-room-type"></span>
-                </div>
-                <div class="summary-item">
-                  <span>Price Per Month:</span>
-                  <span id="summary-price"></span>
-                </div>
-                <div class="summary-item total">
-                  <span>Total (1 month):</span>
-                  <span id="summary-total"></span>
-                </div>
-                <p style="font-size: 0.9em; color: #666; margin-top: 10px;">* Initial payment includes first month's rent</p>
-              </div>
+            <div class="price-row">
+              <span>Security Deposit</span>
+              <span id="security-deposit">₹0</span>
+            </div>
+            <div class="price-row total-row">
+              <span>Total Amount Due</span>
+              <span id="total-amount">₹0</span>
             </div>
           </div>
           
-          <div style="text-align: right; margin-top: 20px;">
-            <button type="button" id="back-to-rooms" class="btn btn-secondary" style="margin-right: 10px;">Back</button>
-            <button type="button" id="next-to-payment" class="btn">Next: Review & Pay</button>
+          <div class="upi-info">
+            <h4>Payment Information</h4>
+            <p>Please send the security deposit to the following UPI ID to confirm your booking:</p>
+            <p><strong>UPI ID:</strong> anandsl147@gmail.com</p>
+            <p>After making the payment, please enter the UPI transaction ID below:</p>
+            <div class="form-group">
+              <label for="upi-transaction-id">UPI Transaction ID</label>
+              <input type="text" id="upi-transaction-id" class="form-control" required>
+            </div>
           </div>
+          
+          <button type="submit" class="btn btn-primary">Confirm Booking</button>
         </form>
-      </div>
-      
-      <!-- Step 3: Review & Pay -->
-      <div id="payment-section" class="booking-section">
-        <h3>Review and Payment</h3>
         
-        <div class="row">
-          <div class="col">
-            <div id="final-booking-summary">
-              <h3>Booking Summary</h3>
-              <div class="summary-item">
-                <span>PG:</span>
-                <span id="final-pg-name"></span>
-              </div>
-              <div class="summary-item">
-                <span>Room Type:</span>
-                <span id="final-room-type"></span>
-              </div>
-              <div class="summary-item">
-                <span>Check-in Date:</span>
-                <span id="final-check-in"></span>
-              </div>
-              <div class="summary-item">
-                <span>Duration:</span>
-                <span id="final-duration"></span>
-              </div>
-              <div class="summary-item">
-                <span>Price Per Month:</span>
-                <span id="final-price"></span>
-              </div>
-              <div class="summary-item total">
-                <span>Initial Payment:</span>
-                <span id="final-total"></span>
-              </div>
-            </div>
+        <div id="booking-success" style="display: none;">
+          <div class="alert alert-success">
+            <h4>Booking Successful!</h4>
+            <p>Your booking has been confirmed. You will receive a confirmation email shortly.</p>
+            <p><strong>Booking ID:</strong> <span id="booking-id"></span></p>
+            <p><strong>Check-in Date:</strong> <span id="confirmation-check-in"></span></p>
+            <a href="/customer.html" class="btn btn-primary">Go to Dashboard</a>
           </div>
-          
-          <div class="col">
-            <h3>Select Payment Method</h3>
-            
-            <div class="payment-methods">
-              <div class="payment-method selected" data-method="upi">
-                <img src="https://cdn-icons-png.flaticon.com/512/6124/6124998.png" alt="UPI" class="payment-icon" width="30" height="30">
-                <span>UPI Payment</span>
-              </div>
-              
-              <div class="payment-method" data-method="cash">
-                <img src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png" alt="Cash" class="payment-icon" width="30" height="30">
-                <span>Pay at PG (Cash)</span>
-              </div>
-            </div>
-            
-            <div id="upi-payment-section" class="upi-details">
-              <h4>UPI Payment Instructions</h4>
-              <ol>
-                <li>Open your UPI app (GPay, PhonePe, Paytm, etc.)</li>
-                <li>Send payment to the UPI ID below</li>
-                <li>Use the Payment ID as reference</li>
-                <li>Enter your UPI Transaction ID below</li>
-              </ol>
-              
-              <div class="upi-id">
-                <strong>UPI ID:</strong> anandsl147@gmail.com
-              </div>
-              
-              <div class="form-group">
-                <label for="payment-id">Payment ID (use as reference)</label>
-                <input type="text" id="payment-id" readonly>
-              </div>
-              
-              <div class="form-group">
-                <label for="transaction-id">UPI Transaction ID</label>
-                <input type="text" id="transaction-id" placeholder="Enter transaction ID from your UPI app">
-              </div>
-            </div>
-            
-            <div id="cash-payment-section" class="upi-details" style="display: none;">
-              <h4>Pay at PG</h4>
-              <p>You can pay in cash when you arrive at the PG. Your booking will be confirmed but marked as pending payment.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div style="text-align: right; margin-top: 20px;">
-          <button type="button" id="back-to-details" class="btn btn-secondary" style="margin-right: 10px;">Back</button>
-          <button type="button" id="complete-booking" class="btn btn-success">Complete Booking</button>
-        </div>
-      </div>
-      
-      <!-- Step 4: Confirmation -->
-      <div id="confirmation-section" class="booking-section">
-        <div class="alert alert-success" style="text-align: center; padding: 20px;">
-          <h2 style="color: #2e7d32;">Booking Successful!</h2>
-          <p>Your PG has been booked successfully. Booking details have been sent to your email.</p>
-        </div>
-        
-        <div id="booking-confirmation-details">
-          <h3>Booking Details</h3>
-          <div class="summary-item">
-            <span>Booking ID:</span>
-            <span id="confirmation-booking-id"></span>
-          </div>
-          <div class="summary-item">
-            <span>PG:</span>
-            <span id="confirmation-pg-name"></span>
-          </div>
-          <div class="summary-item">
-            <span>Room Type:</span>
-            <span id="confirmation-room-type"></span>
-          </div>
-          <div class="summary-item">
-            <span>Check-in Date:</span>
-            <span id="confirmation-check-in"></span>
-          </div>
-          <div class="summary-item">
-            <span>Duration:</span>
-            <span id="confirmation-duration"></span>
-          </div>
-          <div class="summary-item">
-            <span>Payment Status:</span>
-            <span id="confirmation-payment-status"></span>
-          </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px;">
-          <a href="/customer.html" class="btn btn-success">Go to Dashboard</a>
         </div>
       </div>
     </div>
   </main>
+  
+  <footer class="footer">
+    <p>© 2025 PG Rental Website. All rights reserved.</p>
+  </footer>
 
   <script>
-    // Base API URL
-    const API_BASE_URL = 'http://localhost:8000/api';
-    
-    // DOM Elements
-    const loadingSection = document.getElementById('loading');
-    const errorMessage = document.getElementById('error-message');
-    const roomSelectionSection = document.getElementById('room-selection');
-    const bookingDetailsSection = document.getElementById('booking-details');
-    const paymentSection = document.getElementById('payment-section');
-    const confirmationSection = document.getElementById('confirmation-section');
-    const pgDetailsContainer = document.getElementById('pg-details');
-    const roomOptionsContainer = document.getElementById('room-options');
-    const nextToDetailsBtn = document.getElementById('next-to-details');
-    const backToRoomsBtn = document.getElementById('back-to-rooms');
-    const nextToPaymentBtn = document.getElementById('next-to-payment');
-    const backToDetailsBtn = document.getElementById('back-to-details');
-    const completeBookingBtn = document.getElementById('complete-booking');
-    const paymentMethods = document.querySelectorAll('.payment-method');
-    const upiPaymentSection = document.getElementById('upi-payment-section');
-    const cashPaymentSection = document.getElementById('cash-payment-section');
-    const checkInDateInput = document.getElementById('check-in-date');
-    const durationSelect = document.getElementById('duration');
-    const specialRequestsInput = document.getElementById('special-requests');
-    const transactionIdInput = document.getElementById('transaction-id');
-    const paymentIdInput = document.getElementById('payment-id');
-    
-    // Step indicators
-    const step1 = document.getElementById('step-1');
-    const step2 = document.getElementById('step-2');
-    const step3 = document.getElementById('step-3');
-    const step4 = document.getElementById('step-4');
-    
-    // Summary elements
-    const summaryPgName = document.getElementById('summary-pg-name');
-    const summaryRoomType = document.getElementById('summary-room-type');
-    const summaryPrice = document.getElementById('summary-price');
-    const summaryTotal = document.getElementById('summary-total');
-    const finalPgName = document.getElementById('final-pg-name');
-    const finalRoomType = document.getElementById('final-room-type');
-    const finalCheckIn = document.getElementById('final-check-in');
-    const finalDuration = document.getElementById('final-duration');
-    const finalPrice = document.getElementById('final-price');
-    const finalTotal = document.getElementById('final-total');
-    const confirmationBookingId = document.getElementById('confirmation-booking-id');
-    const confirmationPgName = document.getElementById('confirmation-pg-name');
-    const confirmationRoomType = document.getElementById('confirmation-room-type');
-    const confirmationCheckIn = document.getElementById('confirmation-check-in');
-    const confirmationDuration = document.getElementById('confirmation-duration');
-    const confirmationPaymentStatus = document.getElementById('confirmation-payment-status');
-    
-    // Application state
-    let currentUser = null;
-    let authToken = null;
-    let selectedPg = null;
-    let selectedRoomType = null;
-    let paymentMethod = 'upi';
-    let bookingData = {};
-    
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const pgId = urlParams.get('pgId');
-    
-    // Check if user is logged in
-    function checkAuth() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        // Redirect to login page if not logged in
-        window.location.href = '/customer.html';
-        return;
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const bookingForm = document.getElementById('booking-form');
+      const bookingSuccess = document.getElementById('booking-success');
+      const pgId = document.getElementById('pg-id');
+      const roomType = document.getElementById('room-type');
+      const pgTitle = document.getElementById('pg-title');
+      const pgLocation = document.getElementById('pg-location');
+      const roomDetails = document.getElementById('room-details');
+      const monthlyRent = document.getElementById('monthly-rent');
+      const securityDeposit = document.getElementById('security-deposit');
+      const totalAmount = document.getElementById('total-amount');
+      const checkInDate = document.getElementById('check-in-date');
+      const duration = document.getElementById('duration');
+      const bookingId = document.getElementById('booking-id');
+      const confirmationCheckIn = document.getElementById('confirmation-check-in');
       
-      authToken = token;
-      fetchCurrentUser();
-    }
-    
-    // Fetch current user data
-    async function fetchCurrentUser() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
-        });
+      // Set minimum date for check-in to today
+      const today = new Date().toISOString().split('T')[0];
+      checkInDate.min = today;
+      
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const selectedPgId = urlParams.get('pgId');
+      const selectedRoomType = urlParams.get('roomType');
+      
+      // Sample PG data (in a real app, this would be fetched from API)
+      const pgData = [
+        {
+          id: '1',
+          title: 'Spacious 3-Storey PG in City Center',
+          location: 'Koramangala, Bangalore',
+          rooms: [
+            { type: 'Attached', price: 9000, available: true },
+            { type: 'Attached', price: 7500, available: true },
+            { type: 'Attached', price: 7500, available: false },
+            { type: 'Shared', price: 5500, available: true }
+          ]
+        },
+        {
+          id: '2',
+          title: 'Green View PG for Professionals',
+          location: 'HSR Layout, Bangalore',
+          rooms: [
+            { type: 'Attached', price: 10000, available: true },
+            { type: 'Shared', price: 7000, available: true },
+            { type: 'Shared', price: 6500, available: true }
+          ]
+        },
+        {
+          id: '3',
+          title: 'Modern PG with Premium Amenities',
+          location: 'Indiranagar, Bangalore',
+          rooms: [
+            { type: 'Premium Attached', price: 12000, available: true },
+            { type: 'Standard Attached', price: 10000, available: false },
+            { type: 'Shared (2 Person)', price: 8000, available: true }
+          ]
+        }
+      ];
+      
+      // If PG ID is provided, load PG details
+      if (selectedPgId) {
+        const pg = pgData.find(p => p.id === selectedPgId);
         
-        if (response.ok) {
-          const data = await response.json();
-          currentUser = data.data;
-          document.getElementById('username-display').textContent = currentUser.username;
-          document.getElementById('username-display').style.display = 'inline';
+        if (pg) {
+          pgId.value = pg.id;
+          pgTitle.textContent = pg.title;
+          pgLocation.textContent = pg.location;
           
-          // After user is authenticated, load PG data
-          if (pgId) {
-            fetchPgDetails(pgId);
+          // If room type is provided, select that room
+          if (selectedRoomType) {
+            const room = pg.rooms.find(r => r.type === selectedRoomType && r.available);
+            
+            if (room) {
+              roomType.value = room.type;
+              roomDetails.textContent = `${room.type} Room - ₹${room.price}/month`;
+              updatePriceSummary(room.price);
+            } else {
+              // If specified room is not available, select the first available room
+              const firstAvailableRoom = pg.rooms.find(r => r.available);
+              
+              if (firstAvailableRoom) {
+                roomType.value = firstAvailableRoom.type;
+                roomDetails.textContent = `${firstAvailableRoom.type} Room - ₹${firstAvailableRoom.price}/month`;
+                updatePriceSummary(firstAvailableRoom.price);
+              } else {
+                roomDetails.textContent = 'No rooms available';
+              }
+            }
           } else {
-            showError('No PG selected. Please select a PG from the listings.');
+            // If no room type is provided, show dropdown to select room
+            const availableRooms = pg.rooms.filter(r => r.available);
+            
+            if (availableRooms.length > 0) {
+              let roomHtml = '<div class="form-group"><label for="select-room">Select Room Type</label><select id="select-room" class="form-control" required>';
+              
+              availableRooms.forEach(room => {
+                roomHtml += `<option value="${room.type}" data-price="${room.price}">${room.type} Room - ₹${room.price}/month</option>`;
+              });
+              
+              roomHtml += '</select></div>';
+              roomDetails.innerHTML = roomHtml;
+              
+              // Set initial values using the first available room
+              roomType.value = availableRooms[0].type;
+              updatePriceSummary(availableRooms[0].price);
+              
+              // Add event listener to room selection dropdown
+              document.getElementById('select-room').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const price = selectedOption.getAttribute('data-price');
+                roomType.value = this.value;
+                updatePriceSummary(price);
+              });
+            } else {
+              roomDetails.textContent = 'No rooms available';
+            }
           }
         } else {
-          // Invalid token, redirect to login
-          localStorage.removeItem('token');
-          window.location.href = '/customer.html';
+          pgTitle.textContent = 'PG not found';
         }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        showError('Failed to authenticate. Please login again.');
+      } else {
+        pgTitle.textContent = 'No PG selected';
       }
-    }
-    
-    // Fetch PG details
-    async function fetchPgDetails(pgId) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/pgs/${pgId}`);
+      
+      // Update price summary based on room price and duration
+      function updatePriceSummary(price) {
+        const rentAmount = parseInt(price || 0);
+        const depositAmount = rentAmount * 2; // Security deposit is typically 2 months rent
         
-        if (response.ok) {
-          const data = await response.json();
-          selectedPg = data.data;
-          
-          // Display PG details
-          renderPgDetails(selectedPg);
-          
-          // Set minimum check-in date to tomorrow
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          checkInDateInput.min = tomorrow.toISOString().split('T')[0];
-          checkInDateInput.value = tomorrow.toISOString().split('T')[0];
-          
-          // Generate payment ID
-          paymentIdInput.value = `PG_${Date.now()}_${currentUser.id}`;
-          
-          // Hide loading
-          loadingSection.style.display = 'none';
-          roomSelectionSection.style.display = 'block';
-        } else {
-          showError('PG not found or unavailable.');
-        }
-      } catch (error) {
-        console.error('Error fetching PG details:', error);
-        showError('Failed to load PG details. Please try again.');
-      }
-    }
-    
-    // Render PG details
-    function renderPgDetails(pg) {
-      // Display PG details
-      let pgHtml = `
-        <div class="pg-image" style="background-image: url('${pg.images[0]}')"></div>
-        <h3>${pg.title}</h3>
-        <p>${pg.location}</p>
-        <p>${pg.description}</p>
-        <div style="margin-top: 15px;">
-          <h4>Amenities</h4>
-          <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px;">
-            ${pg.amenities.map(amenity => 
-              `<span class="amenity" style="background-color: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${amenity}</span>`
-            ).join('')}
-          </div>
-        </div>
-      `;
-      pgDetailsContainer.innerHTML = pgHtml;
-      
-      // Display room options
-      let roomsHtml = '';
-      pg.roomTypes.forEach((room, index) => {
-        if (room.availability > 0) {
-          roomsHtml += `
-            <div class="room-option" data-index="${index}" data-type="${room.type}" data-price="${room.price}">
-              <h4>${room.type}</h4>
-              <p>${room.description || 'Comfortable room with basic amenities.'}</p>
-              <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                <span>₹${room.price}/month</span>
-                <span style="color: #4caf50;">${room.availability} available</span>
-              </div>
-            </div>
-          `;
-        }
-      });
-      
-      if (roomsHtml === '') {
-        roomsHtml = '<p>No rooms available at this PG currently.</p>';
-      }
-      
-      roomOptionsContainer.innerHTML = roomsHtml;
-      
-      // Add event listeners to room options
-      document.querySelectorAll('.room-option').forEach(option => {
-        option.addEventListener('click', () => {
-          // Deselect all options
-          document.querySelectorAll('.room-option').forEach(opt => {
-            opt.classList.remove('selected');
-          });
-          
-          // Select clicked option
-          option.classList.add('selected');
-          
-          // Update selected room data
-          const index = parseInt(option.getAttribute('data-index'));
-          selectedRoomType = pg.roomTypes[index];
-          
-          // Enable next button
-          nextToDetailsBtn.disabled = false;
-          
-          // Update booking summary
-          updateBookingSummary();
+        monthlyRent.textContent = `₹${rentAmount}`;
+        securityDeposit.textContent = `₹${depositAmount}`;
+        totalAmount.textContent = `₹${depositAmount + rentAmount}`; // First month + deposit
+        
+        // Update when duration changes
+        duration.addEventListener('change', function() {
+          const months = parseInt(this.value || 0);
+          const advanceRent = months > 1 ? rentAmount : 0; // For advance payment if more than 1 month
+          totalAmount.textContent = `₹${depositAmount + rentAmount + advanceRent}`;
         });
+      }
+      
+      // Form submission
+      bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // In a real app, this would be sent to the backend for processing
+        const bookingData = {
+          pgId: pgId.value,
+          roomType: roomType.value,
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          checkInDate: checkInDate.value,
+          duration: duration.value,
+          upiTransactionId: document.getElementById('upi-transaction-id').value,
+          totalAmount: totalAmount.textContent,
+          bookingId: 'BK' + Date.now().toString().substring(5)
+        };
+        
+        // Show booking success message
+        bookingId.textContent = bookingData.bookingId;
+        confirmationCheckIn.textContent = new Date(bookingData.checkInDate).toDateString();
+        bookingForm.style.display = 'none';
+        bookingSuccess.style.display = 'block';
+        
+        // In a real app, we would post this data to the backend
+        console.log('Booking submitted:', bookingData);
       });
-    }
-    
-    // Update booking summary
-    function updateBookingSummary() {
-      if (!selectedPg || !selectedRoomType) return;
-      
-      // Basic summary
-      summaryPgName.textContent = selectedPg.title;
-      summaryRoomType.textContent = selectedRoomType.type;
-      summaryPrice.textContent = `₹${selectedRoomType.price}`;
-      summaryTotal.textContent = `₹${selectedRoomType.price}`;
-      
-      // Update duration based summary
-      durationSelect.addEventListener('change', () => {
-        const duration = parseInt(durationSelect.value);
-        summaryTotal.textContent = `₹${selectedRoomType.price}`;
-      });
-    }
-    
-    // Update final summary
-    function updateFinalSummary() {
-      if (!selectedPg || !selectedRoomType) return;
-      
-      const checkInDate = new Date(checkInDateInput.value);
-      const duration = parseInt(durationSelect.value);
-      
-      finalPgName.textContent = selectedPg.title;
-      finalRoomType.textContent = selectedRoomType.type;
-      finalCheckIn.textContent = checkInDate.toLocaleDateString();
-      finalDuration.textContent = `${duration} ${duration === 1 ? 'month' : 'months'}`;
-      finalPrice.textContent = `₹${selectedRoomType.price}`;
-      finalTotal.textContent = `₹${selectedRoomType.price}`;
-    }
-    
-    // Show error message
-    function showError(message) {
-      loadingSection.style.display = 'none';
-      errorMessage.textContent = message;
-      errorMessage.style.display = 'block';
-    }
-    
-    // Create booking
-    async function createBooking() {
-      const checkInDate = new Date(checkInDateInput.value);
-      const duration = parseInt(durationSelect.value);
-      const specialRequests = specialRequestsInput.value;
-      
-      // Calculate check-out date (optional)
-      let checkOutDate = new Date(checkInDate);
-      checkOutDate.setMonth(checkOutDate.getMonth() + duration);
-      
-      // Initialize payment data
-      let initialPayment = 0;
-      let paymentMethodType = paymentMethod;
-      let transactionId = '';
-      
-      // If UPI payment is selected, get transaction ID
-      if (paymentMethod === 'upi') {
-        transactionId = transactionIdInput.value;
-        if (!transactionId) {
-          alert('Please enter the UPI transaction ID to complete your booking.');
-          return;
-        }
-        initialPayment = selectedRoomType.price;
-      }
-      
-      // Prepare booking data
-      bookingData = {
-        pgId: selectedPg.id,
-        roomType: selectedRoomType.type,
-        checkInDate: checkInDate.toISOString(),
-        checkOutDate: checkOutDate.toISOString(),
-        totalAmount: selectedRoomType.price,
-        initialPayment: initialPayment,
-        paymentMethod: paymentMethodType,
-        transactionId: transactionId,
-        specialRequests: specialRequests
-      };
-      
-      try {
-        const response = await fetch(`${API_BASE_URL}/bookings`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bookingData)
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          const booking = data.data;
-          
-          // Update confirmation details
-          confirmationBookingId.textContent = booking.id;
-          confirmationPgName.textContent = selectedPg.title;
-          confirmationRoomType.textContent = selectedRoomType.type;
-          confirmationCheckIn.textContent = new Date(booking.checkInDate).toLocaleDateString();
-          confirmationDuration.textContent = `${duration} ${duration === 1 ? 'month' : 'months'}`;
-          confirmationPaymentStatus.textContent = booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1);
-          
-          // Show confirmation section
-          paymentSection.style.display = 'none';
-          confirmationSection.style.display = 'block';
-          
-          // Update step indicators
-          step3.classList.remove('active');
-          step3.classList.add('completed');
-          step4.classList.add('active');
-        } else {
-          const errorData = await response.json();
-          alert(errorData.message || 'Failed to create booking. Please try again.');
-        }
-      } catch (error) {
-        console.error('Booking error:', error);
-        alert('An error occurred while creating your booking. Please try again.');
-      }
-    }
-    
-    // Navigation between booking steps
-    nextToDetailsBtn.addEventListener('click', () => {
-      if (!selectedRoomType) {
-        alert('Please select a room type to continue.');
-        return;
-      }
-      
-      roomSelectionSection.style.display = 'none';
-      bookingDetailsSection.style.display = 'block';
-      
-      // Update step indicators
-      step1.classList.remove('active');
-      step1.classList.add('completed');
-      step2.classList.add('active');
-      
-      // Update booking summary
-      updateBookingSummary();
-    });
-    
-    backToRoomsBtn.addEventListener('click', () => {
-      bookingDetailsSection.style.display = 'none';
-      roomSelectionSection.style.display = 'block';
-      
-      // Update step indicators
-      step2.classList.remove('active');
-      step1.classList.remove('completed');
-      step1.classList.add('active');
-    });
-    
-    nextToPaymentBtn.addEventListener('click', () => {
-      // Validate form
-      if (!checkInDateInput.value) {
-        alert('Please select a check-in date.');
-        return;
-      }
-      
-      bookingDetailsSection.style.display = 'none';
-      paymentSection.style.display = 'block';
-      
-      // Update step indicators
-      step2.classList.remove('active');
-      step2.classList.add('completed');
-      step3.classList.add('active');
-      
-      // Update final summary
-      updateFinalSummary();
-    });
-    
-    backToDetailsBtn.addEventListener('click', () => {
-      paymentSection.style.display = 'none';
-      bookingDetailsSection.style.display = 'block';
-      
-      // Update step indicators
-      step3.classList.remove('active');
-      step2.classList.remove('completed');
-      step2.classList.add('active');
-    });
-    
-    completeBookingBtn.addEventListener('click', () => {
-      createBooking();
-    });
-    
-    // Payment method selection
-    paymentMethods.forEach(method => {
-      method.addEventListener('click', () => {
-        // Deselect all methods
-        paymentMethods.forEach(m => {
-          m.classList.remove('selected');
-        });
-        
-        // Select clicked method
-        method.classList.add('selected');
-        
-        // Update payment method
-        paymentMethod = method.getAttribute('data-method');
-        
-        // Show relevant payment section
-        if (paymentMethod === 'upi') {
-          upiPaymentSection.style.display = 'block';
-          cashPaymentSection.style.display = 'none';
-        } else {
-          upiPaymentSection.style.display = 'none';
-          cashPaymentSection.style.display = 'block';
-        }
-      });
-    });
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      checkAuth();
     });
   </script>
 </body>
