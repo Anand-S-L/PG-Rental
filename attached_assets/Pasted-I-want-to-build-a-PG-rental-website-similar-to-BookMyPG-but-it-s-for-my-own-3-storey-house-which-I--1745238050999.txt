@@ -1,0 +1,121 @@
+I want to build a PG rental website similar to BookMyPG, but it's for my own 3-storey house which I’m renting out. I currently have PGs in 2 locations, but the site should support adding more dynamically. I’m okay with coding, but want free hosting and the ability to code from an Android tablet using tools like Gitpod or Replit.
+
+
+---
+
+Tech Stack:
+
+Frontend: Angular
+
+Backend: Spring Boot
+
+Database: PostgreSQL
+
+Frontend Hosting: Vercel or Firebase Hosting
+
+Backend Hosting: Render or Railway
+
+Database Hosting: Supabase or Neon
+
+
+
+---
+
+Required Features:
+
+User-Facing:
+
+Home page with list of available PGs
+
+Individual PG detail page
+
+Contact/Booking button (simple for now)
+
+
+Admin Panel:
+
+Simple protected form (token/password-based) to add/edit/delete PG listings
+
+
+
+---
+
+Backend (Spring Boot):
+
+Entity: PG
+
+id: UUID
+
+title: String
+
+locationLink: String
+
+rooms: List<Room>
+
+description: String
+
+amenities: List<String>
+
+images: List<String>
+
+
+Entity: Room
+
+type: String ("Attached" / "Shared")
+
+price: int
+
+available: boolean
+
+
+Endpoints:
+
+GET /pgs
+
+GET /pgs/{id}
+
+POST /pgs
+
+PUT /pgs/{id}
+
+DELETE /pgs/{id}
+
+
+
+
+---
+
+Frontend (Angular):
+
+Components:
+
+Home (list PGs)
+
+PG Details
+
+Admin Page
+
+
+Admin form includes title, location link, room data, and amenities
+
+Connects to Spring Boot backend
+
+
+
+---
+
+PG Listing Sample Data:
+
+{
+  "title": "Spacious 3-Storey PG in City Center",
+  "locationLink": "https://maps.app.goo.gl/KMjGd1uU2hN1kkU39",
+  "description": "Newly constructed PG, only 3 months old, located in the main city area with all basic necessities nearby. Just 200m from hospitals and schools. Ideal for bachelors with 2-wheelers (no car parking).",
+  "rooms": [
+    { "type": "Attached", "price": 9000, "available": true },
+    { "type": "Attached", "price": 7500, "available": true },
+    { "type": "Attached", "price": 7500, "available": true },
+    { "type": "Attached", "price": 7500, "available": true },
+    { "type": "Shared", "price": 5500, "available": true }
+  ],
+  "amenities": ["2-Wheeler Parking", "Nearby Schools", "Nearby Hospitals", "Main City Area", "Neat & Clean"]
+}
