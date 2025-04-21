@@ -95,8 +95,26 @@ export default function BookingPage() {
     }
   };
 
-  const onSubmit = (values: BookingFormValues) => {
-    bookingMutation.mutate(values);
+  const onSubmit = async (values: BookingFormValues) => {
+    try {
+      const response = await fetch('/api/book-room', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Booking failed');
+      }
+      
+      const data = await response.json();
+      bookingMutation.mutate(data);
+    } catch (error) {
+      console.error('Booking error:', error);
+    }
   };
 
   if (isLoadingRoom) {
