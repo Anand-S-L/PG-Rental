@@ -5,6 +5,26 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Define public directory path
+const publicDir = path.join(__dirname, 'public');
+const indexPath = path.join(publicDir, 'index.html');
+
+// Log directory and file information
+console.log(`Public directory: ${publicDir}`);
+console.log(`Index path: ${indexPath}`);
+console.log(`Public directory exists: ${fs.existsSync(publicDir)}`);
+console.log(`Index file exists: ${fs.existsSync(indexPath)}`);
+
+// List files in public directory
+try {
+  if (fs.existsSync(publicDir)) {
+    const files = fs.readdirSync(publicDir);
+    console.log('Files in public directory:', files);
+  }
+} catch (error) {
+  console.error('Error reading directory:', error);
+}
+
 // Log all requests
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
@@ -18,22 +38,32 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve test.html from the current directory
+// Serve static files from the public directory
+app.use(express.static(publicDir));
+
+// Root route - serve index.html
 app.get('/', (req, res) => {
-  const testPath = path.join(__dirname, 'test.html');
-  console.log(`Serving test.html from: ${testPath}`);
-  console.log(`File exists: ${fs.existsSync(testPath)}`);
+  console.log(`Serving index.html from: ${indexPath}`);
   
-  if (fs.existsSync(testPath)) {
-    res.sendFile(testPath);
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
   } else {
-    res.status(404).send('Test page not found');
+    res.status(404).send('Index file not found');
   }
 });
 
 // Create a simple API endpoint for testing
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Server is working!', timestamp: new Date() });
+});
+
+// Handle 404s by serving index.html (for client-side routing)
+app.use((req, res) => {
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Page not found');
+  }
 });
 
 // Start the server
